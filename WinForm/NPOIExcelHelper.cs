@@ -27,11 +27,6 @@ namespace WinForm
             {
                 using (ExcelHelper excelHelper = new ExcelHelper(file))
                 {
-                    //DataTable data = GenerateData();
-                    //deptBLL getdataDept = new deptBLL();    //写一个从数据库查出来的表
-
-                    //  DataTable data = getdataDept.GetdatagetdataDept();
-
                     int count = excelHelper.DataTableToExcel(tabl, "MySheet", true);
                     if (count > 0)
                         Console.WriteLine("Number of imported data is {0} ", count);

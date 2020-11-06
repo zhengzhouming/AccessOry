@@ -701,12 +701,12 @@ and(size != '' or size is null)  group by od_no,style_id,mas_id,color_no,size--s
             string sqlstr = @" 
 				      					select m.od_no,m.style_id ,m.mas_id,m.mas_name,m.color_no,m.color_name2
 					    ,m.unit_id,m.unit_id_p,m.trans_rate 
-					  ,m.size 							
+					  ,m.size 	 ,m.unit_qty ,m.od_qty							
 					  from mats  m					       
-					  where m.od_no='"+ od_no + @"'   
+					  where m.od_no like'%" + od_no + @"%'   
 					  group by m.od_no,m.style_id,m.mas_id,m.mas_name,m.color_no,m.color_name2
 					    ,m.unit_id,m.unit_id_p,m.trans_rate 
-					  ,m.size 		
+					  ,m.size 	 ,m.unit_qty	,m.od_qty	
 					order by m.mas_id,m.color_no;";
 
             
@@ -741,7 +741,9 @@ and(size != '' or size is null)  group by od_no,style_id,mas_id,color_no,size--s
             list.unit_id = Convert.ToString(ERP_SqlHelper.FromDbValue(dr["unit_id"])); //物料单位           
             list.color_name2 = Convert.ToString(ERP_SqlHelper.FromDbValue(dr["color_name2"])); // 颜色中文名称           
             list.trans_rate = Convert.ToDouble(ERP_SqlHelper.FromDbValue(dr["trans_rate"])); //单位转换比率           
-            list.unit_id_p = Convert.ToString(ERP_SqlHelper.FromDbValue(dr["unit_id_p"])); //发料单位           
+            list.unit_id_p = Convert.ToString(ERP_SqlHelper.FromDbValue(dr["unit_id_p"])); //发料单位    
+            list.unit_qty = Convert.ToDouble(ERP_SqlHelper.FromDbValue(dr["unit_qty"])); //单件用量 
+            list.od_qty = Convert.ToInt32(ERP_SqlHelper.FromDbValue(dr["od_qty"])); //订单数量   
         }
 
 
@@ -1269,6 +1271,16 @@ and(size != '' or size is null)  group by od_no,style_id,mas_id,color_no,size--s
 
             int result = Mysql_SqlHelper.ExecuteNonQuery(sqlstr);
             return result;
+
+        }
+
+
+        public  DataTable getAccessoryhByreceiveNumber(string reno, string renoBatch)
+        {
+            //SELECT * from accessoryouth where receiveNumber ='DA2010000001'  and receiveNumberBatch='04'
+            string sqlstr = @"SELECT * from accessoryouth where receiveNumber ='" + reno + "' and receiveNumberBatch= '" + renoBatch + "'";
+            DataTable dt = Mysql_SqlHelper.ExcuteTable(sqlstr);  
+            return dt;
 
         }
     }

@@ -7,6 +7,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace COMMON
@@ -18,6 +19,8 @@ namespace COMMON
         private IWorkbook workbook1 = null;
         private FileStream fs = null;
         private bool disposed;
+
+       
 
         public ExcelHelper(string fileName)
         {
@@ -132,16 +135,14 @@ namespace COMMON
                 }
                 else
                 {
-                    startRow = sheet.FirstRowNum + 1;
+                    startRow = sheet.FirstRowNum;
                 }
 
                 if (sheet != null)
                 {
                     int rowCount = sheet.LastRowNum;//获得行数
                     int maxcellCount = 0;//最大列数量
-                    int maxcellno = 0;//最大列的行号
-                    for (int r = 0; r < rowCount; ++r) //计算下一行的数据  取多列的行的数据生成列
-                    {
+                    int maxcellno = 0;//最大列的行号                       
                         for (int i = startRow; i <= rowCount; ++i)
                         {
                             IRow row = sheet.GetRow(i);
@@ -149,43 +150,55 @@ namespace COMMON
                             {
                                 continue; //没有数据的行默认是null　　 continue 结束单次循环　　　　　
                             }
-                            //  IRow firstRow = sheet.GetRow(r);
                             int cellCount = row.LastCellNum; //一行最后一个cell的编号 这一行的总的列数
-
                             if (cellCount > maxcellCount)
                             {
                                 maxcellCount = cellCount;//最大列数
-                                //这一列的行号
                                 maxcellno = i;
                             }
-                        }//for (int i = startRow; i <= rowCount; ++i)
-                    }
+                        }
+
                     IRow firstRow = sheet.GetRow(maxcellno);
-                    //   int cellCount = firstRow.LastCellNum; //一行最后一个cell的编号 即总的列数
-                    //  bool isFirstRowColumn = true;
-                    //  }
-                    //  if (isFirstRowColumn)
-                    // {
+                    int cellNo = 0;                  
                     for (int i = firstRow.FirstCellNum; i < maxcellCount; ++i)
                     {
-                        //名为“XX”的列已属于此 DataTable 的錯誤,資料一樣就會出錯---Excel 20170719
-                        //      DataColumn column = new DataColumn(i.ToString());
-                        //    data.Columns.Add(column);
-
                         ICell cell = firstRow.GetCell(i);
                         if (cell != null)
                         {
-                            string cellValue = Convert.ToString(cell);
+                            // string cellValue = "";
+                            /**********
+                            //单元格的类型为公式，返回公式的值
+                            if (cell.CellType == CellType.Numeric)
+                            {                                
+                                //是日期型
+                                if (HSSFDateUtil.IsCellDateFormatted(cell))
+                                {
+                                    cellValue = cell.DateCellValue.ToString("yyyy-MM-dd HH:mm:ss");
+                                }
+                                //不是日期型
+                                else
+                                {
+                                    cellValue = Convert.ToString(cell);
+                                }
+                            }
+                            else
+                            {
+                                cellValue = Convert.ToString(cell);
+                            }
+                          
+                            *****/
+                            cellNo = cellNo + 1;
+                              string cellValue = Convert.ToString(cell)+ cellNo;
 
                             //   string cellValue = cell.StringCellValue;
-                            if (cellValue != null)
+                            if (cellValue != null  )
                             {
-                                DataColumn column = new DataColumn(cellValue);
-                                data.Columns.Add(column);
+                                DataColumn column = new DataColumn(cellValue );                                
+                                data.Columns.Add(column);   
                             }
-                        }
-                    }//for (int i = firstRow.FirstCellNum; i < maxcellCount; ++i)
 
+                        }
+                    }
                     //最后一列的标号
                     //int rowCount = sheet.LastRowNum;
                     for (int i = startRow; i <= rowCount; ++i)
@@ -198,30 +211,125 @@ namespace COMMON
                         DataRow dataRow = data.NewRow();
                         for (int j = row.FirstCellNum; j < maxcellCount; ++j)
                         {
-                            //   if (row.GetCell(j) != null) //同理，没有数据的单元格都默认是null
-                            //   dataRow[j] = row.GetCell(j).ToString();
                             if (row.GetCell(j) != null) //同理，没有数据的单元格都默认是null
                             {
-                                string va = row.GetCell(j).ToString();
-                                // MessageBox.Show(va);
+                                string datastr = "";
+                                /**********/
+                                //单元格的类型为公式，返回公式的值  CellType.Numeric
+                                if (row.GetCell(j).CellType == CellType.Numeric)  
+                                {
+                                    //是日期型
+                                    if (HSSFDateUtil.IsCellDateFormatted(row.GetCell(j)))
+                                    {
+                                        datastr = row.GetCell(j).DateCellValue.ToString("yyyy-MM-dd");
+                                        dataRow[j] = datastr;
+                                    }
+                                    else
+                                    {
+                                        dataRow[j] = row.GetCell(j).NumericCellValue.ToString();
+                                    }
+                                }
+                                else
+                                {
+                                    dataRow[j] = row.GetCell(j).ToString();
+                                }
+                                /**********/
+                                string va = dataRow[j].ToString();
+                                bool r = IsDateTime(va);
+                                if (r)
+                                {
+                                    va = va.Replace(".","-");
+                                    va = va.Replace("/", "-");
+                                    va = va.Replace("年", "-");
+                                    va = va.Replace("月", "-");
+                                    va = va.Replace("日", "");
+                                    va = va.Replace("\\", "-");
+                                }
+                                    
+                                if(va.Length >0 &&  va.Substring(va.Length - 1 ,1) == "-")
+                                {
+                                    va = va.Substring(0, va.Length - 1);
+                                }
                                 dataRow[j] = va;
-                                //   dataRow[j] = row.GetCell(j).ToString();/////报错
                             }
-                            // dataRow[j] = Convert.ToString( row.GetCell(j));/////报错
-                        }//一列的值
-
+                        }
                         data.Rows.Add(dataRow);
-                    }// for (int i = startRow; i <= rowCount; ++i)
-                }//for (int r = 0; r < rowCount; ++r)
-
+                    }
+                }
                 return data;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                // Console.WriteLine("Exception: " + ex.Message);
                 return null;
             }
+        }
+
+        /// <summary>
+        /// 使用正则表达式判断是否为日期
+        /// </summary>
+        /// <param name="str" type=string></param>
+        /// <returns name="isDateTime" type=bool></returns>
+        public bool IsDateTime(string str)
+        {
+            bool isDateTime = false;
+            // yyyy/MM/dd
+            if (Regex.IsMatch(str, "^(?<year>\\d{2,4})/(?<month>\\d{1,2})/(?<day>\\d{1,2})$"))
+                isDateTime = true;
+            // yyyy\MM\dd
+            if (Regex.IsMatch(str, "^(?<year>\\d{2,4})\\\\(?<month>\\d{1,2})\\\\(?<day>\\d{1,2})$"))
+                isDateTime = true;
+            // yyyy-MM-dd 
+            else if (Regex.IsMatch(str, "^(?<year>\\d{2,4})-(?<month>\\d{1,2})-(?<day>\\d{1,2})$"))
+                isDateTime = true;
+            // yyyy.MM.dd 
+            else if (Regex.IsMatch(str, "^(?<year>\\d{2,4})[.](?<month>\\d{1,2})[.](?<day>\\d{1,2})$"))
+                isDateTime = true;
+            // yyyy年MM月dd
+            else if (Regex.IsMatch(str, "^((?<year>\\d{2,4})年)?(?<month>\\d{1,2})月((?<day>\\d{1,2}))?$"))
+                isDateTime = true;
+            // yyyy年MM月dd日
+            else if (Regex.IsMatch(str, "^((?<year>\\d{2,4})年)?(?<month>\\d{1,2})月((?<day>\\d{1,2})日)?$"))
+                isDateTime = true;
+            // yyyy年MM月dd日
+            else if (Regex.IsMatch(str, "^((?<year>\\d{2,4})年)?(正|一|二|三|四|五|六|七|八|九|十|十一|十二)月((一|二|三|四|五|六|七|八|九|十){1,3}日)?$"))
+                isDateTime = true;
+
+
+            // yyyy年MM月dd日
+            else if (Regex.IsMatch(str, "^(零|〇|一|二|三|四|五|六|七|八|九|十){2,4}年((正|一|二|三|四|五|六|七|八|九|十|十一|十二)月((一|二|三|四|五|六|七|八|九|十){1,3}(日)?)?)?$"))
+                isDateTime = true;
+            // yyyy年
+            //else if (Regex.IsMatch(str, "^(?<year>\\d{2,4})年$"))
+            //    isDateTime = true;
+
+            // 农历1
+            else if (Regex.IsMatch(str, "^(甲|乙|丙|丁|戊|己|庚|辛|壬|癸)(子|丑|寅|卯|辰|巳|午|未|申|酉|戌|亥)年((正|一|二|三|四|五|六|七|八|九|十|十一|十二)月((一|二|三|四|五|六|七|八|九|十){1,3}(日)?)?)?$"))
+                isDateTime = true;
+            // 农历2
+            else if (Regex.IsMatch(str, "^((甲|乙|丙|丁|戊|己|庚|辛|壬|癸)(子|丑|寅|卯|辰|巳|午|未|申|酉|戌|亥)年)?(正|一|二|三|四|五|六|七|八|九|十|十一|十二)月初(一|二|三|四|五|六|七|八|九|十)$"))
+                isDateTime = true;
+
+            // XX时XX分XX秒
+            else if (Regex.IsMatch(str, "^(?<hour>\\d{1,2})(时|点)(?<minute>\\d{1,2})分((?<second>\\d{1,2})秒)?$"))
+                isDateTime = true;
+            // XX时XX分XX秒
+            else if (Regex.IsMatch(str, "^((零|一|二|三|四|五|六|七|八|九|十){1,3})(时|点)((零|一|二|三|四|五|六|七|八|九|十){1,3})分(((零|一|二|三|四|五|六|七|八|九|十){1,3})秒)?$"))
+                isDateTime = true;
+            // XX分XX秒
+            else if (Regex.IsMatch(str, "^(?<minute>\\d{1,2})分(?<second>\\d{1,2})秒$"))
+                isDateTime = true;
+            // XX分XX秒
+            else if (Regex.IsMatch(str, "^((零|一|二|三|四|五|六|七|八|九|十){1,3})分((零|一|二|三|四|五|六|七|八|九|十){1,3})秒$"))
+                isDateTime = true;
+
+            // XX时
+            else if (Regex.IsMatch(str, "\\b(?<hour>\\d{1,2})(时|点钟)\\b"))
+                isDateTime = true;
+            else
+                isDateTime = false;
+
+            return isDateTime;
         }
 
         public DataTable ReadExcelToDataTable(string fileName, string sheetName = null, bool isFirstRowColumn = true)

@@ -33,13 +33,23 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.MenuSys = new System.Windows.Forms.ToolStripMenuItem();
             this.TSMenuExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuPP = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuSizeRun = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuFP = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuPropertyNumber = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuMain = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuAccessory = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuAccessoryOut = new System.Windows.Forms.ToolStripMenuItem();
-            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.MenuProduct = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuOutgoing = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuDeliveryCompare = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuPOTrading = new System.Windows.Forms.ToolStripMenuItem();
+            this.pONikeConnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuWindow = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.MenuCloseAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.MenuReceipt = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,8 +57,11 @@
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenuSys,
+            this.MenuPP,
+            this.MenuFP,
             this.MenuMain,
             this.MenuAccessory,
+            this.MenuProduct,
             this.MenuWindow});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.MdiWindowListItem = this.MenuWindow;
@@ -72,6 +85,36 @@
             this.TSMenuExit.Text = "退出";
             this.TSMenuExit.Click += new System.EventHandler(this.TSMenuExit_Click);
             // 
+            // MenuPP
+            // 
+            this.MenuPP.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuSizeRun});
+            this.MenuPP.Name = "MenuPP";
+            this.MenuPP.Size = new System.Drawing.Size(67, 20);
+            this.MenuPP.Text = "生产计划";
+            // 
+            // MenuSizeRun
+            // 
+            this.MenuSizeRun.Name = "MenuSizeRun";
+            this.MenuSizeRun.Size = new System.Drawing.Size(119, 22);
+            this.MenuSizeRun.Text = "SizeRun";
+            this.MenuSizeRun.Click += new System.EventHandler(this.MenuSizeRun_Click);
+            // 
+            // MenuFP
+            // 
+            this.MenuFP.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuPropertyNumber});
+            this.MenuFP.Name = "MenuFP";
+            this.MenuFP.Size = new System.Drawing.Size(67, 20);
+            this.MenuFP.Text = "厂务规划";
+            // 
+            // MenuPropertyNumber
+            // 
+            this.MenuPropertyNumber.Name = "MenuPropertyNumber";
+            this.MenuPropertyNumber.Size = new System.Drawing.Size(122, 22);
+            this.MenuPropertyNumber.Text = "财编打印";
+            this.MenuPropertyNumber.Click += new System.EventHandler(this.MenuPropertyNumber_Click);
+            // 
             // MenuMain
             // 
             this.MenuMain.Name = "MenuMain";
@@ -89,15 +132,50 @@
             // MenuAccessoryOut
             // 
             this.MenuAccessoryOut.Name = "MenuAccessoryOut";
-            this.MenuAccessoryOut.Size = new System.Drawing.Size(180, 22);
+            this.MenuAccessoryOut.Size = new System.Drawing.Size(122, 22);
             this.MenuAccessoryOut.Text = "辅料发料";
             this.MenuAccessoryOut.Click += new System.EventHandler(this.MenuAccessoryOut_Click);
             // 
-            // notifyIcon1
+            // MenuProduct
             // 
-            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-            this.notifyIcon1.Text = "notifyIcon1";
-            this.notifyIcon1.Visible = true;
+            this.MenuProduct.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuReceipt,
+            this.MenuOutgoing,
+            this.MenuDeliveryCompare,
+            this.MenuPOTrading,
+            this.pONikeConnectToolStripMenuItem});
+            this.MenuProduct.Name = "MenuProduct";
+            this.MenuProduct.Size = new System.Drawing.Size(43, 20);
+            this.MenuProduct.Text = "成品";
+            // 
+            // MenuOutgoing
+            // 
+            this.MenuOutgoing.Name = "MenuOutgoing";
+            this.MenuOutgoing.Size = new System.Drawing.Size(224, 22);
+            this.MenuOutgoing.Text = "入库查询";
+            this.MenuOutgoing.Click += new System.EventHandler(this.MenuOutgoing_Click);
+            // 
+            // MenuDeliveryCompare
+            // 
+            this.MenuDeliveryCompare.Name = "MenuDeliveryCompare";
+            this.MenuDeliveryCompare.Size = new System.Drawing.Size(224, 22);
+            this.MenuDeliveryCompare.Text = "收货入库比对";
+            this.MenuDeliveryCompare.Click += new System.EventHandler(this.MenuDeliveryCompare_Click);
+            // 
+            // MenuPOTrading
+            // 
+            this.MenuPOTrading.Enabled = false;
+            this.MenuPOTrading.Name = "MenuPOTrading";
+            this.MenuPOTrading.Size = new System.Drawing.Size(224, 22);
+            this.MenuPOTrading.Text = "PO# Trading Company PO";
+            this.MenuPOTrading.Click += new System.EventHandler(this.MenuPOTrading_Click);
+            // 
+            // pONikeConnectToolStripMenuItem
+            // 
+            this.pONikeConnectToolStripMenuItem.Name = "pONikeConnectToolStripMenuItem";
+            this.pONikeConnectToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.pONikeConnectToolStripMenuItem.Text = "PO# NikeConnect";
+            this.pONikeConnectToolStripMenuItem.Click += new System.EventHandler(this.pONikeConnectToolStripMenuItem_Click);
             // 
             // MenuWindow
             // 
@@ -111,14 +189,27 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(143, 6);
             // 
             // MenuCloseAll
             // 
             this.MenuCloseAll.Name = "MenuCloseAll";
-            this.MenuCloseAll.Size = new System.Drawing.Size(180, 22);
+            this.MenuCloseAll.Size = new System.Drawing.Size(146, 22);
             this.MenuCloseAll.Text = "关闭所有窗口";
             this.MenuCloseAll.Click += new System.EventHandler(this.MenuCloseAll_Click);
+            // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "Sabrina 仓库管理助手";
+            this.notifyIcon1.Visible = true;
+            // 
+            // MenuReceipt
+            // 
+            this.MenuReceipt.Name = "MenuReceipt";
+            this.MenuReceipt.Size = new System.Drawing.Size(224, 22);
+            this.MenuReceipt.Text = "无条码收货入库";
+            this.MenuReceipt.Click += new System.EventHandler(this.MenuReceipt_Click);
             // 
             // FrmMain
             // 
@@ -130,7 +221,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
             this.Name = "FrmMain";
-            this.Text = "Warehouse Management Assist";
+            this.Text = "仓库管理助手";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
@@ -151,6 +242,16 @@
         private System.Windows.Forms.ToolStripMenuItem MenuWindow;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem MenuCloseAll;
+        private System.Windows.Forms.ToolStripMenuItem MenuPP;
+        private System.Windows.Forms.ToolStripMenuItem MenuSizeRun;
+        private System.Windows.Forms.ToolStripMenuItem MenuProduct;
+        private System.Windows.Forms.ToolStripMenuItem MenuOutgoing;
+        private System.Windows.Forms.ToolStripMenuItem MenuFP;
+        private System.Windows.Forms.ToolStripMenuItem MenuPropertyNumber;
+        private System.Windows.Forms.ToolStripMenuItem MenuPOTrading;
+        private System.Windows.Forms.ToolStripMenuItem pONikeConnectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem MenuDeliveryCompare;
+        private System.Windows.Forms.ToolStripMenuItem MenuReceipt;
     }
 }
 

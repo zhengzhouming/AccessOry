@@ -122,6 +122,7 @@
             this.btnOk.TabIndex = 6;
             this.btnOk.Text = "马上更新";
             this.btnOk.UseVisualStyleBackColor = true;
+            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // DownloadConfirm
             // 
@@ -134,6 +135,7 @@
             this.Controls.Add(this.btnOk);
             this.Name = "DownloadConfirm";
             this.Text = "DownloadConfirm";
+            this.Load += new System.EventHandler(this.OnLoad);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);

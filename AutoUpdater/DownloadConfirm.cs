@@ -32,10 +32,7 @@ namespace zengzhouming.Update
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-        }
 
-        private void listDownloadFile_SelectedIndexChanged(object sender, EventArgs e)
-        {
         }
     }
 }

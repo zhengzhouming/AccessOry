@@ -597,7 +597,7 @@
             this.Controls.Add(this.gbSearchLists);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmaccessoryOut";
-            this.Text = "accessoryOut";
+            this.Text = "辅料发料";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.FrmaccessoryOut_Load);
             this.Resize += new System.EventHandler(this.FrmaccessoryOut_Resize);

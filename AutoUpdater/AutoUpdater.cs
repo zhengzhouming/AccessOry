@@ -120,7 +120,7 @@ namespace zengzhouming.Update
                 if (bNeedRestart)
                 {
                     File.Delete(unRarPath + rarName);
-                    MessageBox.Show("sfd﹝", "sfd", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Download Success", "Download Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     string batstr = @"xcopy TEMP\* * /s /f /h /y"
                                             + "\r\n" + "rd /s /q TEMP"
                                             + "\r\n" + "del " + rarName

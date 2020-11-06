@@ -45,6 +45,11 @@ namespace BLL
             return aos.getAccessoryOutByLocalHostDB(od_no);
         }
 
+        public DataTable getAccessoryhByreceiveNumber(string reno, string renoBatch)
+        {
+            return aos.getAccessoryhByreceiveNumber(reno, renoBatch);
+        }
+
         public int delAccessoryOutFromLocalHostDBByMyNumber(string mynumber)
         {
             return aos.delAccessoryOutFromLocalHostDBByMyNumber(mynumber);

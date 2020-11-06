@@ -22,7 +22,7 @@ namespace WinForm
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Process instance = RunningInstance();
-            /*
+            
             if (instance == null)
             {
                 //1.1 没有实例在运行
@@ -61,8 +61,8 @@ namespace WinForm
                 //1.2 已经有一个实例在运行
                 HandleRunningInstance(instance);
             }
-            */
-            Application.Run(new FrmMain());
+            
+           // Application.Run(new FrmMain());
         }
 
         //2.在进程中查找是否已经有实例在运行

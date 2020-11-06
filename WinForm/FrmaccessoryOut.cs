@@ -1,5 +1,6 @@
 ﻿
 using BLL;
+using COMMON;
 using MODEL;
 using NPOI.SS.Formula.Functions;
 using System;
@@ -26,6 +27,7 @@ namespace WinForm
     {
         private static FrmaccessoryOut frm;
         private BLL.accessoryOutManager accoryOut = new accessoryOutManager();
+        public   xiaomingCommom myCommon = new xiaomingCommom();
         private BackgroundWorker bgWorker = new BackgroundWorker();
         private Secont secont = new Secont();
         private TestLinManager LinSerTest = new TestLinManager();
@@ -34,6 +36,9 @@ namespace WinForm
         private bool isLinSer = false;
         public DataTable accessoryDT = new DataTable();
         List<allqtys> allqtys = new List<allqtys>();
+        
+        public string reNo = ""; //发料单号
+        public string reNoBatch = "";//发料单批号
 
         public List<parameter> items = new List<parameter>();
         public string Org = "SAA";
@@ -47,9 +52,9 @@ namespace WinForm
             bgWorker.ProgressChanged += ProgressChanged_Handler;
             bgWorker.RunWorkerCompleted += RunWorkerCompleted_Handler;
 
-           
 
-            dgvAccessory.DoubleBufferedDataGirdView(true);
+
+            DoubleBufferDataGridView.DoubleBufferedDataGirdView(this.dgvAccessory,true);
 
 
         }
@@ -875,7 +880,7 @@ namespace WinForm
 
                           Cursor = Cursors.Default;
                           this.dgvAccessory.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.ColorTranslator.FromHtml("#D3D3D3");
-                          this.btConfirmOut.Enabled = true;
+                        //  this.btConfirmOut.Enabled = true;
                       }
                   ));
 
@@ -1715,8 +1720,11 @@ namespace WinForm
                                             gc.color_name2 = groupMaterials[k].color_name2;
                                             gc.unit_id = groupMaterials[k].unit_id;
                                             gc.unit_id_p = groupMaterials[k].unit_id_p;
+                                            gc.unit_qty = groupMaterials[k].unit_qty;
                                             gc.trans_rate = groupMaterials[k].trans_rate;
                                             gc.size = groupMaterials[k].size;
+                                            gc.od_qty = groupMaterials[k].od_qty;
+                                            
 
                                             gc.clr_no = groupColorsNames[i];
                                             gc.be_id = groupCloNames[0].w_id;
@@ -1807,7 +1815,11 @@ namespace WinForm
                             {
                                 for (int j = 0; j < purs.Count; j++)
                                 {
-                                    if (groupColorsMaterialAll[i].mas_id == purs[j].mas_id && groupColorsMaterialAll[i].color_no == purs[j].color_no && groupColorsMaterialAll[i].size == purs[j].size)
+                                    if (groupColorsMaterialAll[i].mas_id == purs[j].mas_id && 
+                                        groupColorsMaterialAll[i].color_no == purs[j].color_no && 
+                                        groupColorsMaterialAll[i].size == purs[j].size && 
+                                        groupColorsMaterialAll[i].unit_qty == purs[j].unit_qty && 
+                                        groupColorsMaterialAll[i].od_qty == purs[j].od_qty)
                                     {
                                         groupColorsMaterialAll[i].vend_id = purs[j].vend_id;
                                         groupColorsMaterialAll[i].vend_abbr = purs[j].vend_abbr;
@@ -2376,7 +2388,7 @@ namespace WinForm
                             nulldv();
                             this.dgvAccessory.DataSource = null;
                             this.dgvAccessory.DataSource = accessoryDT;
-                              this.btConfirmOut.Enabled = true;
+                             // this.btConfirmOut.Enabled = true;
                               foreach (DataGridViewColumn dgvc in dgvAccessory.Columns)
                             {
                                 if (dgvc.DataPropertyName == "select"  || dgvc.DataPropertyName == "mas_qty")
@@ -3306,13 +3318,24 @@ namespace WinForm
 
             List<materials> mMaterial = new List<materials>();
             int batch = 0;
+            int maxBatch = 0;
             string  batchstr = "";
             if (tb == null ||  tb.Rows.Count <= 0)
             {
                 return;
             }
            
+            // 取出最大的批号
             for (int i = 0; i < tb.Rows.Count; i++)
+            {
+                batch = Convert.ToInt32(tb.Rows[i]["receiveNumberBatch"].ToString());
+                if(batch > maxBatch)
+                {
+                    maxBatch = batch;
+                }
+            }
+
+                for (int i = 0; i < tb.Rows.Count; i++)
             {
                 if (tb.Rows[i]["select"].ToString() == "True")
                 {
@@ -3320,7 +3343,7 @@ namespace WinForm
                     tb.Rows[i]["masFinished_qty"] = Convert.ToDouble( tb.Rows[i]["masFinished_qty"].ToString()) + Convert.ToDouble(tb.Rows[i]["mas_qty"].ToString());
                     tb.Rows[i]["masUnfinished_qty"] = Convert.ToDouble(tb.Rows[i]["pu_trans_qty"].ToString()) - Convert.ToDouble(tb.Rows[i]["masFinished_qty"].ToString());
 
-                    batch = Convert.ToInt32(tb.Rows[i]["receiveNumberBatch"].ToString()) + 1;
+                    batch = maxBatch + 1;
                     batchstr = batch.ToString();
                     while (batchstr.ToString().Length < 2)
                     {
@@ -3457,10 +3480,14 @@ namespace WinForm
 
                     mMaterial.Add(mitem);
                 }
-                this.btPrint.Visible = true;
-                this.btPrint.Enabled = true;
+                //this.btPrint.Visible = true;
+                //this.btPrint.Enabled = true;
             }
 
+            if (makeMaterial.Count <= 0)
+            {
+                return;
+            }
             //对 字段的特殊处理
             string str = "";
             for (int i = 0; i < makeMaterial.Count; i++)
@@ -3478,8 +3505,10 @@ namespace WinForm
                 mMaterial[i].mas_name = str;
             }
 
+             this.reNo = makeMaterial[0].receiveNumber  ; //发料单号
+             this.reNoBatch = makeMaterial[0].receiveNumberBatch;//发料单批号
 
-            accoryOut.writeAccessoryhToDB(makeMaterial);
+        accoryOut.writeAccessoryhToDB(makeMaterial);
             accoryOut.updataAccessoryToDB(mMaterial);
             //把选择好的写入数据库
             // 累计发料=累计发料+本次发料
@@ -3487,23 +3516,26 @@ namespace WinForm
             // 本次发料 =0
             // 基它不动
             MessageBox.Show("保存完成");
-            this.btConfirmOut.Enabled = false;
+            // this.btConfirmOut.Enabled = false;
         }
 
         private void FrmaccessoryOut_Load(object sender, EventArgs e)
         {
-            this.btPrint.Enabled = false;
-            this.btPrint.Visible = false;
-            this.btConfirmOut.Enabled = false;
+           // this.btPrint.Enabled = false;
+           // this.btPrint.Visible = false;
+          //  this.btConfirmOut.Enabled = false;
         }
 
         private void btPrint_Click(object sender, EventArgs e)
         {
+            FrmAccessOryPrint frm = FrmAccessOryPrint.GetSingleton(this.reNo,this.reNoBatch);
+           // frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
 
-            
 
 
-            this.btPrint.Enabled = false;
+            //this.btPrint.Enabled = false;
 
              
         }

@@ -52,5 +52,62 @@ namespace WinForm
                     myForm.Close(); //关闭子窗体
             }
         }
+
+        private void MenuSizeRun_Click(object sender, EventArgs e)
+        {
+            FrmSizeRun frm = FrmSizeRun.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+        }
+
+        private void MenuOutgoing_Click(object sender, EventArgs e)
+        {
+            FrmOutgoing frm = FrmOutgoing.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+        }
+
+        private void MenuPropertyNumber_Click(object sender, EventArgs e)
+        {
+            FrmFactoryplanning frm = FrmFactoryplanning.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+        }
+
+        private void MenuPOTrading_Click(object sender, EventArgs e)
+        {
+            FrmPoTradingComanyPO frm = FrmPoTradingComanyPO.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+        }
+
+        private void pONikeConnectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FrmNikeConnect frm = FrmNikeConnect.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+        }
+
+        private void MenuDeliveryCompare_Click(object sender, EventArgs e)
+        {
+            FrmDeliveryCompare frm = FrmDeliveryCompare.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+        }
+
+        private void MenuReceipt_Click(object sender, EventArgs e)
+        {
+            FrmDeliveryCompare frm = FrmDeliveryCompare.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+
+        }
     }
 }

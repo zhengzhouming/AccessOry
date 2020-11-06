@@ -44,6 +44,7 @@
             this.buttonOk.TabIndex = 7;
             this.buttonOk.Text = "取消";
             this.buttonOk.UseVisualStyleBackColor = true;
+            this.buttonOk.Click += new System.EventHandler(this.OnCancel);
             // 
             // progressBarTotal
             // 
@@ -100,6 +101,8 @@
             this.Controls.Add(this.labelCurrent);
             this.Name = "DownloadProgress";
             this.Text = "DownloadProgress";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
+            this.Load += new System.EventHandler(this.OnFormLoad);
             this.ResumeLayout(false);
             this.PerformLayout();
 

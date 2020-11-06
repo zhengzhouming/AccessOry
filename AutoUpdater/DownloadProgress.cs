@@ -25,7 +25,7 @@ namespace zengzhouming.Update
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!isFinished && DialogResult.No == MessageBox.Show("絞淏婓載陔ㄛ岆瘁秏ˋ", "赻雄汔撰", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+            if (!isFinished && DialogResult.No == MessageBox.Show("11111", "22222", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
             {
                 e.Cancel = true;
                 return;
@@ -181,5 +181,7 @@ namespace zengzhouming.Update
             evtDownload.Set();
             evtPerDonwload.Set();
         }
+
+         
     }
 }
