@@ -47,6 +47,11 @@ namespace BLL
         {
             return ogs.getMy_NoFromBest(po_no,clr_no, style_id, area_id, def_date);
         }
+        public DataTable getReceiFromNoBarCode(string org, string subinv, string location)
+        {
+            return ogs.getReceiFromNoBarCode(org, subinv, location );
+
+        }
 
     }
 }

@@ -37,6 +37,7 @@
             this.dtpkStarTime = new System.Windows.Forms.DateTimePicker();
             this.dtpkStopTime = new System.Windows.Forms.DateTimePicker();
             this.bgSearch = new System.Windows.Forms.GroupBox();
+            this.butExcelReport = new System.Windows.Forms.Button();
             this.labWorking2 = new System.Windows.Forms.Label();
             this.labWorking = new System.Windows.Forms.Label();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
@@ -45,23 +46,29 @@
             this.rabutSAA = new System.Windows.Forms.RadioButton();
             this.butSearch = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            this.gbOut = new System.Windows.Forms.GroupBox();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.dgvOutgoingTable = new System.Windows.Forms.DataGridView();
-            this.dgvOutMWH = new System.Windows.Forms.DataGridView();
             this.MenuRight = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.RmeCopyCells = new System.Windows.Forms.ToolStripMenuItem();
             this.RmeCopyRows = new System.Windows.Forms.ToolStripMenuItem();
             this.RmeExportExcel = new System.Windows.Forms.ToolStripMenuItem();
+            this.tbOut = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.dgvOutgoingTable = new System.Windows.Forms.DataGridView();
+            this.dgvOutMWH = new System.Windows.Forms.DataGridView();
+            this.dgvOutCount = new System.Windows.Forms.DataGridView();
             this.bgSearch.SuspendLayout();
-            this.gbOut.SuspendLayout();
+            this.MenuRight.SuspendLayout();
+            this.tbOut.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOutgoingTable)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOutMWH)).BeginInit();
-            this.MenuRight.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvOutCount)).BeginInit();
             this.SuspendLayout();
             // 
             // cbSubinv
@@ -109,6 +116,7 @@
             this.cbLocation.Name = "cbLocation";
             this.cbLocation.Size = new System.Drawing.Size(121, 20);
             this.cbLocation.TabIndex = 4;
+            this.cbLocation.SelectedIndexChanged += new System.EventHandler(this.cbLocation_SelectedIndexChanged);
             // 
             // dtpkStarTime
             // 
@@ -126,6 +134,7 @@
             // 
             // bgSearch
             // 
+            this.bgSearch.Controls.Add(this.butExcelReport);
             this.bgSearch.Controls.Add(this.labWorking2);
             this.bgSearch.Controls.Add(this.labWorking);
             this.bgSearch.Controls.Add(this.progressBar2);
@@ -147,6 +156,16 @@
             this.bgSearch.TabIndex = 8;
             this.bgSearch.TabStop = false;
             this.bgSearch.Text = "查询条件";
+            // 
+            // butExcelReport
+            // 
+            this.butExcelReport.Location = new System.Drawing.Point(848, 57);
+            this.butExcelReport.Name = "butExcelReport";
+            this.butExcelReport.Size = new System.Drawing.Size(75, 31);
+            this.butExcelReport.TabIndex = 15;
+            this.butExcelReport.Text = "导出汇总表";
+            this.butExcelReport.UseVisualStyleBackColor = true;
+            this.butExcelReport.Click += new System.EventHandler(this.butExcelReport_Click);
             // 
             // labWorking2
             // 
@@ -208,7 +227,7 @@
             // 
             this.butSearch.Location = new System.Drawing.Point(848, 10);
             this.butSearch.Name = "butSearch";
-            this.butSearch.Size = new System.Drawing.Size(74, 78);
+            this.butSearch.Size = new System.Drawing.Size(74, 45);
             this.butSearch.TabIndex = 8;
             this.butSearch.Text = "查询";
             this.butSearch.UseVisualStyleBackColor = true;
@@ -222,60 +241,6 @@
             this.label4.Size = new System.Drawing.Size(17, 12);
             this.label4.TabIndex = 7;
             this.label4.Text = "至";
-            // 
-            // gbOut
-            // 
-            this.gbOut.Controls.Add(this.splitContainer1);
-            this.gbOut.Location = new System.Drawing.Point(6, 102);
-            this.gbOut.Name = "gbOut";
-            this.gbOut.Size = new System.Drawing.Size(930, 570);
-            this.gbOut.TabIndex = 9;
-            this.gbOut.TabStop = false;
-            this.gbOut.Text = "外发入库详情";
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 17);
-            this.splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.dgvOutgoingTable);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.dgvOutMWH);
-            this.splitContainer1.Size = new System.Drawing.Size(924, 550);
-            this.splitContainer1.SplitterDistance = 685;
-            this.splitContainer1.TabIndex = 8;
-            // 
-            // dgvOutgoingTable
-            // 
-            this.dgvOutgoingTable.AllowUserToAddRows = false;
-            this.dgvOutgoingTable.AllowUserToDeleteRows = false;
-            this.dgvOutgoingTable.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvOutgoingTable.Location = new System.Drawing.Point(0, 0);
-            this.dgvOutgoingTable.Name = "dgvOutgoingTable";
-            this.dgvOutgoingTable.ReadOnly = true;
-            this.dgvOutgoingTable.RowTemplate.Height = 23;
-            this.dgvOutgoingTable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvOutgoingTable.Size = new System.Drawing.Size(681, 546);
-            this.dgvOutgoingTable.TabIndex = 8;
-            this.dgvOutgoingTable.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvOutgoingTable_CellDoubleClick);
-            this.dgvOutgoingTable.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvOutgoingTable_CellMouseDown);
-            this.dgvOutgoingTable.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dgvOutgoingTable_RowPostPaint);
-            // 
-            // dgvOutMWH
-            // 
-            this.dgvOutMWH.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvOutMWH.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvOutMWH.Location = new System.Drawing.Point(0, 0);
-            this.dgvOutMWH.Name = "dgvOutMWH";
-            this.dgvOutMWH.RowTemplate.Height = 23;
-            this.dgvOutMWH.Size = new System.Drawing.Size(231, 546);
-            this.dgvOutMWH.TabIndex = 0;
             // 
             // MenuRight
             // 
@@ -310,28 +275,125 @@
             this.RmeExportExcel.Text = "ExportExcel";
             this.RmeExportExcel.Click += new System.EventHandler(this.RmeExportExcel_Click);
             // 
+            // tbOut
+            // 
+            this.tbOut.Controls.Add(this.tabPage1);
+            this.tbOut.Controls.Add(this.tabPage2);
+            this.tbOut.Location = new System.Drawing.Point(5, 102);
+            this.tbOut.Name = "tbOut";
+            this.tbOut.SelectedIndex = 0;
+            this.tbOut.Size = new System.Drawing.Size(931, 596);
+            this.tbOut.TabIndex = 10;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.splitContainer1);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(923, 570);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "入库详情";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.dgvOutCount);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(923, 570);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "汇总";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.dgvOutgoingTable);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.dgvOutMWH);
+            this.splitContainer1.Size = new System.Drawing.Size(917, 564);
+            this.splitContainer1.SplitterDistance = 643;
+            this.splitContainer1.TabIndex = 9;
+            // 
+            // dgvOutgoingTable
+            // 
+            this.dgvOutgoingTable.AllowUserToAddRows = false;
+            this.dgvOutgoingTable.AllowUserToDeleteRows = false;
+            this.dgvOutgoingTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvOutgoingTable.Location = new System.Drawing.Point(0, 0);
+            this.dgvOutgoingTable.Name = "dgvOutgoingTable";
+            this.dgvOutgoingTable.ReadOnly = true;
+            this.dgvOutgoingTable.RowTemplate.Height = 23;
+            this.dgvOutgoingTable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvOutgoingTable.Size = new System.Drawing.Size(639, 560);
+            this.dgvOutgoingTable.TabIndex = 8;
+            this.dgvOutgoingTable.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvOutgoingTable_CellDoubleClick);
+            this.dgvOutgoingTable.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvOutgoingTable_CellMouseDown);
+            this.dgvOutgoingTable.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dgvOutgoingTable_RowPostPaint);
+            // 
+            // dgvOutMWH
+            // 
+            this.dgvOutMWH.AllowUserToAddRows = false;
+            this.dgvOutMWH.AllowUserToDeleteRows = false;
+            this.dgvOutMWH.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvOutMWH.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvOutMWH.Location = new System.Drawing.Point(0, 0);
+            this.dgvOutMWH.Name = "dgvOutMWH";
+            this.dgvOutMWH.ReadOnly = true;
+            this.dgvOutMWH.RowTemplate.Height = 23;
+            this.dgvOutMWH.Size = new System.Drawing.Size(266, 560);
+            this.dgvOutMWH.TabIndex = 0;
+            // 
+            // dgvOutCount
+            // 
+            this.dgvOutCount.AllowUserToAddRows = false;
+            this.dgvOutCount.AllowUserToDeleteRows = false;
+            this.dgvOutCount.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvOutCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvOutCount.Location = new System.Drawing.Point(3, 3);
+            this.dgvOutCount.Name = "dgvOutCount";
+            this.dgvOutCount.ReadOnly = true;
+            this.dgvOutCount.RowTemplate.Height = 23;
+            this.dgvOutCount.Size = new System.Drawing.Size(917, 564);
+            this.dgvOutCount.TabIndex = 0;
+            this.dgvOutCount.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvOutCount_CellMouseDown);
+            this.dgvOutCount.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dgvOutCount_RowPostPaint);
+            // 
             // FrmOutgoing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(939, 671);
-            this.Controls.Add(this.gbOut);
+            this.ClientSize = new System.Drawing.Size(933, 697);
+            this.Controls.Add(this.tbOut);
             this.Controls.Add(this.bgSearch);
             this.Name = "FrmOutgoing";
-            this.Text = "入库查询";
+            this.Text = "Nike 入库查询";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.FrmOutgoing_Load);
             this.Resize += new System.EventHandler(this.FrmOutgoing_Resize);
             this.bgSearch.ResumeLayout(false);
             this.bgSearch.PerformLayout();
-            this.gbOut.ResumeLayout(false);
+            this.MenuRight.ResumeLayout(false);
+            this.tbOut.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvOutgoingTable)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOutMWH)).EndInit();
-            this.MenuRight.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvOutCount)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -348,7 +410,6 @@
         private System.Windows.Forms.GroupBox bgSearch;
         private System.Windows.Forms.Button butSearch;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.GroupBox gbOut;
         private System.Windows.Forms.RadioButton rabutTOP;
         private System.Windows.Forms.RadioButton rabutSAA;
         private System.Windows.Forms.ProgressBar progressBar1;
@@ -356,11 +417,16 @@
         private System.Windows.Forms.ToolStripMenuItem RmeCopyCells;
         private System.Windows.Forms.ToolStripMenuItem RmeCopyRows;
         private System.Windows.Forms.ToolStripMenuItem RmeExportExcel;
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.DataGridView dgvOutgoingTable;
-        private System.Windows.Forms.DataGridView dgvOutMWH;
         private System.Windows.Forms.ProgressBar progressBar2;
         private System.Windows.Forms.Label labWorking;
         private System.Windows.Forms.Label labWorking2;
+        private System.Windows.Forms.Button butExcelReport;
+        private System.Windows.Forms.TabControl tbOut;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.DataGridView dgvOutgoingTable;
+        private System.Windows.Forms.DataGridView dgvOutMWH;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.DataGridView dgvOutCount;
     }
 }

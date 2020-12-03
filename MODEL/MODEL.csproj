@@ -76,6 +76,7 @@
     <Compile Include="progressbar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="propertys.cs" />
+    <Compile Include="recei.cs" />
     <Compile Include="sizeRun.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="tradingComanyPO.cs" />

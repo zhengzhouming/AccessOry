@@ -124,6 +124,12 @@
     <Compile Include="FrmNikeConnect.Designer.cs">
       <DependentUpon>FrmNikeConnect.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmNoBraCodeReceipt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmNoBraCodeReceipt.Designer.cs">
+      <DependentUpon>FrmNoBraCodeReceipt.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmPoTradingComanyPO.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -166,6 +172,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmNikeConnect.resx">
       <DependentUpon>FrmNikeConnect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmNoBraCodeReceipt.resx">
+      <DependentUpon>FrmNoBraCodeReceipt.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmPoTradingComanyPO.resx">
       <DependentUpon>FrmPoTradingComanyPO.cs</DependentUpon>

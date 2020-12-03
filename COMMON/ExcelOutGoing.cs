@@ -29,7 +29,7 @@ namespace COMMON
         }
 
       
-        public int DataTableToExcel(DataTable data, string sheetName, bool isColumnWritten)
+        public int DataTableToExcel(DataTable data, string sheetName, bool isColumnWritten,string tableName)
         {
             int i = 0;
             int j = 0;
@@ -71,43 +71,84 @@ namespace COMMON
                 cellStyle.FillForegroundColor = NPOI.HSSF.Util.HSSFColor.Red.Index;
                 cellStyle.FillPattern = FillPattern.SolidForeground;
                 */
-                for (i = 0; i < data.Rows.Count; ++i)
+                if (tableName== "dgvReceiData" || tableName == "dgvOutgoingTable")
                 {
-
-
-                    IRow row = sheet.CreateRow(count);
-                    for (j = 0; j < data.Columns.Count; ++j)
+                    for (i = 0; i < data.Rows.Count; ++i)
                     {
-                        switch (data.Columns[j].ColumnName.ToString())
+                        IRow row = sheet.CreateRow(count);
+                        for (j = 0; j < data.Columns.Count; ++j)
                         {
-                            case "size_qty"://整型
-                            case "box_qty":
-                            case "PO_qty":
-                                row.CreateCell(j).SetCellValue(Convert.ToInt32(data.Rows[i][j].ToString()));
-                                break;
-                            case "kg":
-                                row.CreateCell(j).SetCellValue(Convert.ToDouble(data.Rows[i][j].ToString()));
-                                break;
-                            default://空值处理
-                                row.CreateCell(j).SetCellValue(data.Rows[i][j].ToString());
-                                break;
+                            switch (data.Columns[j].ColumnName.ToString())
+                            {
+                                case "size_qty"://整型
+                                case "box_qty":
+                                case "PO_qty":
+                                case "qtyCount":
+                                case "boxCount":
+                                    string dd = Convert.ToString( data.Rows[i][j]);
+                                    if (dd != "")
+                                    {
+                                        row.CreateCell(j).SetCellValue(Convert.ToInt32(dd));
+                                    }
+                                    else
+                                    {
+                                        row.CreateCell(j).SetCellValue(0);
+                                    }
+                                    
+                                    break;
+                                case "kg":
+                                    string tt = Convert.ToString(data.Rows[i][j]);
+                                    if (tt != "")
+                                    {
+                                        row.CreateCell(j).SetCellValue(Convert.ToDouble(tt));
+                                    }
+                                    else
+                                    {
+                                        row.CreateCell(j).SetCellValue(0);
+                                    }                              
+                                    break;
+                                default://空值处理
+                                    row.CreateCell(j).SetCellValue(data.Rows[i][j].ToString());
+                                    break;
+                            }
                         }
-
+                        ++count;
                     }
-/*
-                    if (row.Cells.Count == data.Columns.Count)
-                    {
-                        if (row.Cells[8].ToString() != "0")
-                        {
-                            row.Cells[8].CellStyle = cellStyle;
-                        }
-                    }
-*/
-                    ++count;
                 }
+                if (tableName == "dgvOutCount")
+                {
+                    for (i = 0; i < data.Rows.Count; ++i)
+                    {
 
 
-
+                        IRow row = sheet.CreateRow(count);
+                        for (j = 0; j < data.Columns.Count; ++j)
+                        {
+                            switch (data.Columns[j].ColumnName.ToString())
+                            {
+                                case "yymm"://整型
+                                case "Buyer_Item":
+                                case "color_code":
+                                case "GtnPO":
+                                case "MAIN_LINE":
+                                    row.CreateCell(j).SetCellValue(data.Rows[i][j].ToString());
+                                    break;
+                                default://其它数字
+                                    string dd = Convert.ToString(data.Rows[i][j]);
+                                    if (dd != "")
+                                    {
+                                        row.CreateCell(j).SetCellValue(Convert.ToInt32(dd));
+                                    }
+                                    else
+                                    {
+                                        row.CreateCell(j).SetCellValue("");
+                                    }
+                                    break;
+                            }
+                        }
+                        ++count;
+                    }
+                }
                 workbook.Write(fs); //写入到excel
                 return count;
             }

@@ -32,7 +32,8 @@ namespace DAL
 									a.cust_id,
 									d.Buyer_Item,
 									n.PONumber AS OrderPO,
-									p.po AS GtnPO,
+									g.po as GtnPO,
+									 
 									p.MAIN_LINE,
 									d.color_code ,
 									DATE_FORMAT( str_to_date(n.OGACDate, '%m/%d/%Y'), '%Y-%m-%d' ) AS OGACDate,
@@ -98,6 +99,7 @@ namespace DAL
 									
 									LEFT JOIN nikeconnect n ON n.TradingCompanyPO =  p.PO 
 														 and n.POItem = p.MAIN_LINE
+									LEFT JOIN gtn_po  g on g.GTN_PO =  p.PO
 									ORDER BY a.con_no, d.Size1 + 0";
 			DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
             return result;
@@ -164,9 +166,9 @@ namespace DAL
 								   h1.release_who,
 								   b1.style_id,
 								   b1.clr_no,
-								   b1.mark,
+								  
 								   b1.od_type,
-									CONVERT(varchar(100),b1.def_date,23)	  def_date,
+								
 								   b1.area_id,
 								   buyid.yymm,
 								   buyid.buy_cname
@@ -195,9 +197,9 @@ namespace DAL
 									 h1.release_who,
 									 b1.style_id,
 									 b1.clr_no,
-									 b1.mark,
+									
 									 b1.od_type,
-									 CONVERT(VARCHAR(100), b1.def_date, 23),
+									
 									 b1.area_id,
 									 buyid.yymm,
 									 buyid.buy_cname;";
@@ -239,6 +241,53 @@ namespace DAL
 														 AND b.def_date='" + def_date + @"'
 								GROUP BY po_no;";
 			DataTable result = BEST_SqlHelper.ExcuteTable(sql);
+			return result;
+		}
+
+		public DataTable getReceiFromNoBarCode(string org, string subinv, string location)
+		{
+
+			string sql = @"
+							 
+							SELECT
+								org,
+								subinv,
+								line,
+								style,
+								color,
+								size,
+								SUM( qtyCount ) qtyCount,
+								SUM( PO ) OffsetQty,
+								receiNumber ,
+								receiDate,
+								receiInPcName
+							FROM
+								receis 
+							WHERE
+								org = '" + org  + @"' 
+								AND subinv = '"+ subinv + @"'
+								AND line = '"+ location + @"' 
+								AND qtyCount > 0 
+								AND receiDate BETWEEN '2020-11-1' and '2020-11-30'
+							GROUP BY
+								org,
+								subinv,
+								line,
+								style,
+								color,
+								size,
+								receiNumber,
+								receiDate,
+								receiInPcName
+							ORDER BY 
+								org,
+								subinv,
+								line,
+								receiDate,
+								style,
+								color,
+								size;";
+			DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
 			return result;
 		}
 	}

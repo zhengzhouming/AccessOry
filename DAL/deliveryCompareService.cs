@@ -89,7 +89,11 @@ namespace DAL
 											WHEN t.AFTER != NULL THEN
 											t.AFTER ELSE d.Size1 
 										END Size1 ,	
-									d.qty  size_qty 
+											CASE 
+											WHEN   (R.receiQty != 0 or  R.receiQty != NULL) THEN   R.receiQty + sum(d.qty	)
+											ELSE    sum( d.qty) 			
+										END  size_qty
+									 
 								FROM
 									(
 									SELECT
@@ -135,6 +139,35 @@ namespace DAL
 									AND p.PPrfNo = d.pprfno 
 									LEFT JOIN transize t on d.Size1  = t.AFTER 
 											 OR d.Size1 = t.BEFORE 
+									LEFT JOIN (
+												SELECT
+													(
+													SUM( qtyCount ) - sum( po )) AS receiQty,
+													org,
+													subinv,
+													line,
+													style,
+													color,
+													size,
+													receiDate 
+												FROM
+													receis 
+												GROUP BY
+													org,
+													subinv,
+													line,
+													style,
+													color,
+													size,
+													receiDate 
+												) r ON R.org = A.org 
+												AND R.subinv = A.subinv 
+												AND R.line = A.location 
+												AND R.style = D.Buyer_Item 
+												AND R.color = D.color_code 
+												AND R.size = D.Size1 
+												AND R.receiDate = DATE_FORMAT( a.ScanTime, '%Y-%m-%d' )
+
 								GROUP BY
 									DATE_FORMAT( a.ScanTime, '%Y-%m-%d' ) ,
 									d.Buyer_Item,

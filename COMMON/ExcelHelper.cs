@@ -104,6 +104,11 @@ namespace COMMON
             ISheet sheet = null;
             DataTable data = new DataTable();
             int startRow = 0;
+
+            // 计时
+            DateTime beforDT = System.DateTime.Now;
+
+         
             try
             {
                 fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
@@ -111,6 +116,10 @@ namespace COMMON
                     workbook = new XSSFWorkbook(fs);
                 else if (fileName.IndexOf(".xls") > 0) // 2003版本
                     workbook = new HSSFWorkbook(fs);
+
+                DateTime afterDT1 = System.DateTime.Now;
+                TimeSpan ts1 = afterDT1.Subtract(beforDT);
+              //  MessageBox.Show("DateTime总共花费{0}ms." + Convert.ToString(ts1.TotalMilliseconds));
 
                 if (sheetName != null)
                 {
@@ -256,6 +265,12 @@ namespace COMMON
                         data.Rows.Add(dataRow);
                     }
                 }
+               
+
+                DateTime afterDT = System.DateTime.Now;
+                TimeSpan ts = afterDT.Subtract(beforDT);
+              //  MessageBox.Show("DateTime总共花费{0}ms."+Convert.ToString(ts.TotalMilliseconds));
+              //  Console.WriteLine("DateTime总共花费{0}ms.", ts.TotalMilliseconds);
                 return data;
             }
             catch (Exception ex)

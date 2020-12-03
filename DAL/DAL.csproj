@@ -84,6 +84,7 @@
     <Compile Include="outGoingService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="propertysService.cs" />
+    <Compile Include="receiServicecs.cs" />
     <Compile Include="sizeRunService.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="TestLinServer.cs" />

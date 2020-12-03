@@ -305,11 +305,15 @@
             // 
             // dgvLocalHostDB
             // 
+            this.dgvLocalHostDB.AllowUserToAddRows = false;
+            this.dgvLocalHostDB.AllowUserToDeleteRows = false;
             this.dgvLocalHostDB.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvLocalHostDB.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvLocalHostDB.Location = new System.Drawing.Point(0, 0);
             this.dgvLocalHostDB.Name = "dgvLocalHostDB";
+            this.dgvLocalHostDB.ReadOnly = true;
             this.dgvLocalHostDB.RowTemplate.Height = 23;
+            this.dgvLocalHostDB.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvLocalHostDB.Size = new System.Drawing.Size(581, 596);
             this.dgvLocalHostDB.TabIndex = 0;
             this.dgvLocalHostDB.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dgvLocalHostDB_RowPostPaint);
@@ -354,7 +358,7 @@
             // 
             this.RmeCopyCells.Image = global::WinForm.Properties.Resources.icons8_复制_64;
             this.RmeCopyCells.Name = "RmeCopyCells";
-            this.RmeCopyCells.Size = new System.Drawing.Size(180, 22);
+            this.RmeCopyCells.Size = new System.Drawing.Size(143, 22);
             this.RmeCopyCells.Text = "CopyCells";
             this.RmeCopyCells.Click += new System.EventHandler(this.RmeCopyCells_Click);
             // 
@@ -362,7 +366,7 @@
             // 
             this.RmeCopyRows.Image = global::WinForm.Properties.Resources.icons8_复制_48;
             this.RmeCopyRows.Name = "RmeCopyRows";
-            this.RmeCopyRows.Size = new System.Drawing.Size(180, 22);
+            this.RmeCopyRows.Size = new System.Drawing.Size(143, 22);
             this.RmeCopyRows.Text = "CopyRows";
             this.RmeCopyRows.Click += new System.EventHandler(this.RmeCopyRows_Click);
             // 
@@ -370,7 +374,7 @@
             // 
             this.RmeExportExcel.Image = global::WinForm.Properties.Resources.Excel_32px_1185986_easyicon_net;
             this.RmeExportExcel.Name = "RmeExportExcel";
-            this.RmeExportExcel.Size = new System.Drawing.Size(180, 22);
+            this.RmeExportExcel.Size = new System.Drawing.Size(143, 22);
             this.RmeExportExcel.Text = "ExportExcel";
             this.RmeExportExcel.Click += new System.EventHandler(this.RmeExportExcel_Click);
             // 

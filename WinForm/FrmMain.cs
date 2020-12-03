@@ -103,7 +103,7 @@ namespace WinForm
 
         private void MenuReceipt_Click(object sender, EventArgs e)
         {
-            FrmDeliveryCompare frm = FrmDeliveryCompare.GetSingleton();
+            FrmNoBraCodeReceipt frm = FrmNoBraCodeReceipt.GetSingleton();
             frm.MdiParent = this;
             frm.Show();
             frm.Activate();

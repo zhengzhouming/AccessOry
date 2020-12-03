@@ -383,6 +383,7 @@ namespace WinForm
                 this.dgvExcels.DataSource = this.dtFromWriteExcel;
                 this.dgvLocalHostDB.DataSource = this.dtFromLocalHost; ;
                 this.dgvCompareResult.DataSource = this.dtnoEques;
+                this.dgvCompareResult.EnableHeadersVisualStyles = false;
                 for (int i = 0; i < dgvCompareResult.Rows.Count; i++)
                 {
                     if (this.dgvCompareResult.Rows[i].Cells[8].Value.ToString() != "0")
@@ -394,6 +395,7 @@ namespace WinForm
                         this.dgvCompareResult.Rows[i].Cells[8].Style.BackColor = System.Drawing.ColorTranslator.FromHtml("#FF0000");
                     }
                 }
+                this.dgvCompareResult.Refresh();
                 changdgvExcelsHeaderText();                
                 changdgvLocalHostDBHeaderText();               
                 changdgvCompareResultHeaderText();
@@ -669,9 +671,10 @@ namespace WinForm
             this.dgvLocalHostDB.DataSource = this.dtFromLocalHost;
             this.dgvCompareResult.DataSource = "";
             this.dgvCompareResult.DataSource = this.dtnoEques;
+            this.dgvCompareResult.EnableHeadersVisualStyles = false;
             for (int i = 0; i < dgvCompareResult.Rows.Count; i++)
             {
-                if (this.dgvCompareResult.Rows[i].Cells[8].Value.ToString() != "0")
+                if (this.dgvCompareResult.Rows[i].Cells[8].Value.ToString() != null && this.dgvCompareResult.Rows[i].Cells[8].Value.ToString() != "0")
                 {
                     //行背景色
                     // this.dgvCompareResult.Rows[i].DefaultCellStyle.BackColor = System.Drawing.ColorTranslator.FromHtml("#FF0000");
@@ -692,6 +695,17 @@ namespace WinForm
             changdgvExcelsHeaderText();
             changdgvLocalHostDBHeaderText();
             changdgvCompareResultHeaderText();
+            this.dgvCompareResult.DataSource = "";
+            this.dgvCompareResult.DataSource = this.dtnoEques;
+            this.dgvCompareResult.EnableHeadersVisualStyles = false;
+            for (int i = 0; i < dgvCompareResult.Rows.Count; i++)
+            {
+                if (this.dgvCompareResult.Rows[i].Cells[8].Value.ToString() != null && this.dgvCompareResult.Rows[i].Cells[8].Value.ToString() != "0")
+                {
+                    //单元格背景色
+                    this.dgvCompareResult.Rows[i].Cells[8].Style.BackColor = System.Drawing.ColorTranslator.FromHtml("#FF0000");
+                }
+            }
         }
 
         public void changdgvExcelsHeaderText()

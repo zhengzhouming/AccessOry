@@ -17,7 +17,7 @@ namespace COMMON
                 using (ExcelHelper excelHelper = new ExcelHelper(file))
                 {
                     DataTable dt = excelHelper.ExcelToDataTable(sheetname, headno);
-                    if (dt.Rows.Count <= 0)
+                    if (dt is null || dt.Rows.Count <= 0)
                     {
                         return null;
                     }

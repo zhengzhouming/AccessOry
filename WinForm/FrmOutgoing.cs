@@ -17,12 +17,16 @@ namespace WinForm
     public partial class FrmOutgoing : Form
     {
         private static FrmOutgoing frm;
-         outGoingManager ogm = new outGoingManager();
+        public outGoingManager ogm = new outGoingManager();
+        public receiManager rm = new receiManager();
         public AccomplishTask TaskCallBack;
         public UpdateUI UpdateUIDelegate;
         public delegate void AccomplishTask();
         public delegate void UpdateUI(bar barstr);
         private delegate void AsynUpdateUI(bar barstr);
+
+        private BackgroundWorker bw = new BackgroundWorker();
+         
         private bar barstr = new bar();
         public bool isod_ouDB = true;
 
@@ -39,6 +43,13 @@ namespace WinForm
             InitializeComponent();
             this.dgvOutgoingTable.DoubleBufferedDataGirdView(true);
             this.dgvOutMWH.DoubleBufferedDataGirdView(true);
+            this.dgvOutCount.DoubleBufferedDataGirdView(true);
+            
+
+            UpdateUIDelegate += UpdataUIStatus;//绑定更新任务状态的委托
+            TaskCallBack += Accomplish;//绑定完成任务要调用的委托
+            bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
+            bw.DoWork += new DoWorkEventHandler(bw_DoWork);
         }
         public static FrmOutgoing GetSingleton()
         {
@@ -64,9 +75,9 @@ namespace WinForm
             bgSearch.Left = 5;
             bgSearch.Width = this.Width - 20;
 
-            gbOut.Left = bgSearch.Left;
-            gbOut.Width = bgSearch.Width;
-            gbOut.Height = this.Height - this.bgSearch.Height - 55;
+            tbOut.Left = bgSearch.Left;
+            tbOut.Width = bgSearch.Width;
+            tbOut.Height = this.Height - this.bgSearch.Height - 55;
         }
 
         private void FrmOutgoing_Load(object sender, EventArgs e)
@@ -168,6 +179,7 @@ namespace WinForm
 
         private void butSearch_Click(object sender, EventArgs e)
         {
+
            
             if (this.rabutSAA.Checked)
             {
@@ -213,16 +225,24 @@ namespace WinForm
                 MessageBox.Show("结束时间不能为空");
                 return;
             }
+            this.dgvOutgoingTable.DataSource = null;
+            this.dt.Clear();
+            this.splitContainer1.Panel2Collapsed = false;
+            this.tbOut.SelectedIndex= 0;
 
             Cursor = Cursors.WaitCursor;
-            UpdateUIDelegate += UpdataUIStatus;//绑定更新任务状态的委托
-            TaskCallBack += Accomplish;//绑定完成任务要调用的委托
-            using (BackgroundWorker bw = new BackgroundWorker())
-            {
-                bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
-                bw.DoWork += new DoWorkEventHandler(bw_DoWork);
-                bw.RunWorkerAsync();
+          
+                if (!bw.IsBusy)
+                {
+                   
+                    bw.RunWorkerAsync();
             }
+            else
+            {
+                MessageBox.Show("系统正在运行，请稍等...");
+            }
+               
+             
         }
 
 
@@ -234,11 +254,11 @@ namespace WinForm
                 {
                     this.progressBar1.Maximum = s.maxstep;
                     this.progressBar1.Value = s.step;
-                    this.labWorking.Text = s.str + "    " + s.step.ToString() + "/" + s.maxstep.ToString() +" %";
+                    this.labWorking.Text = s.str + "    " + s.step.ToString() + "/" + s.maxstep.ToString() ;
 
                     this.progressBar2.Maximum = s.maxstep2;
                     this.progressBar2.Value = s.step2;
-                    this.labWorking2.Text = s.str2 + "    " + s.step2.ToString() + "/" + s.maxstep2.ToString() + " %";
+                    this.labWorking2.Text = s.str2 + "    " + s.step2.ToString() + "/" + s.maxstep2.ToString() ;
 
                 }), barstr);
             }
@@ -247,12 +267,12 @@ namespace WinForm
                 this.progressBar1.Minimum = 0;
                 this.progressBar1.Maximum = barstr.maxstep;
                 this.progressBar1.Value = barstr.step;
-                this.labWorking.Text = barstr.str + "    " + barstr.step.ToString() + "/" + barstr.maxstep.ToString() + " %";
+                this.labWorking.Text = barstr.str + "    " + barstr.step.ToString() + "/" + barstr.maxstep.ToString() ;
 
                 this.progressBar2.Minimum = 0;
                 this.progressBar2.Maximum = barstr.maxstep2;
                 this.progressBar2.Value = barstr.step2;
-                this.labWorking2.Text = barstr.str2 + "    " + barstr.step2.ToString() + "/" + barstr.maxstep2.ToString() + " %";
+                this.labWorking2.Text = barstr.str2 + "    " + barstr.step2.ToString() + "/" + barstr.maxstep2.ToString() ;
             }
         }
 
@@ -261,7 +281,8 @@ namespace WinForm
         {     
             if (this.dt != null)
             {
-                this.dgvOutgoingTable.DataSource = dt;
+                this.dgvOutgoingTable.DataSource = null;
+                this.dgvOutgoingTable.DataSource = this.dt;
                 if (isod_ouDB)
                 {
                     changOd_Ou_HeaderText();
@@ -281,11 +302,11 @@ namespace WinForm
         {
 
             barstr.str = "正在查询入库扫描资料...";
-            barstr.step = 85;
-            barstr.maxstep = 100;
+            barstr.step = 1;
+            barstr.maxstep = 4;
             barstr.str2 = "查询入库扫描资料";
-            barstr.step2 = 25;
-            barstr.maxstep2 = 100;
+            barstr.step2 = 1;
+            barstr.maxstep2 = 4;
             UpdateUIDelegate(barstr);
 
 
@@ -313,13 +334,13 @@ namespace WinForm
             barstr.maxstep = outGoingDT.Rows.Count;
 
             barstr.str2 = "正在查询入库扫描记录";
-            barstr.step2 = 55;
-            barstr.maxstep2 =100;
+            barstr.step2 = 2;
+            barstr.maxstep2 =4;
             UpdateUIDelegate(barstr);
 
             for (int i = 0; i < outGoingDT.Rows.Count; i++)
             {
-                barstr.step = i / outGoingDT.Rows.Count * 100;
+                barstr.step = i;
                 UpdateUIDelegate(barstr);
 
                 outGoing_pos ogp = new outGoing_pos();
@@ -330,6 +351,7 @@ namespace WinForm
                 else
                 {
                     ogp.po_ids = outGoingDT.Rows[i]["OrderPO"].ToString();
+                     
                 }
 
                 ogp.style_ids = outGoingDT.Rows[i]["Buyer_Item"].ToString();
@@ -360,12 +382,12 @@ namespace WinForm
             }
             
             barstr.str = "正在查询订单系统资料.";
-            barstr.step = 100;
-            barstr.maxstep = 100;
+            barstr.step = 3;
+            barstr.maxstep = 4;
 
             barstr.str2 = "正在查询订单系统资料..";
-            barstr.step2 = 75;
-            barstr.maxstep2 = 100;
+            barstr.step2 = 3;
+            barstr.maxstep2 = 4;
             UpdateUIDelegate(barstr);
 
             //查询 
@@ -390,6 +412,7 @@ namespace WinForm
                 UpdateUIDelegate(barstr);               
                 MessageBox.Show("没有找到订单数据");
                 this.isod_ouDB = false;
+                this.dt.Clear();
                 this.dt = outGoingDT;
             }
             else
@@ -441,25 +464,37 @@ namespace WinForm
                 n.OGACDate,
                 n.Plant,
                  */
+                barstr.maxstep = od_infoDB.Rows.Count;
+                barstr.step = 0;
+                barstr.maxstep2 = outGoingDT.Rows.Count;
+                barstr.step2 = 0;
+                UpdateUIDelegate(barstr);
 
+               
 
                 //合并订单数据与入库数据
                 for (   int i = 0; i < outGoingDT.Rows.Count; i++)
                 {
-                    barstr.step = i / outGoingDT.Rows.Count * 100;
-                    UpdateUIDelegate(barstr);
+                    //  barstr.step2 = Convert.ToInt32( Convert.ToDouble(i) / Convert.ToDouble(outGoingDT.Rows.Count)  * 100);
+                    barstr.step2 = i;
+                    //UpdateUIDelegate(barstr);
+
 
                     for (int j = 0; j < od_infoDB.Rows.Count; j++)
                     {
-                        barstr.step2 = j / od_infoDB.Rows.Count * 100;
-                        UpdateUIDelegate(barstr);
+                        // barstr.step = Convert.ToInt32(Convert.ToDouble(j) / Convert.ToDouble(od_infoDB.Rows.Count) * 100);
+                  //      barstr.step = j;
+                     //   UpdateUIDelegate(barstr);
 
-                        if (outGoingDT.Rows[i]["OrderPO"].ToString() == od_infoDB.Rows[j]["po_no"].ToString() &&
+                        if ( //outGoingDT.Rows[i]["OrderPO"].ToString() == od_infoDB.Rows[j]["po_no"].ToString() &&
                             outGoingDT.Rows[i]["Buyer_Item"].ToString() == od_infoDB.Rows[j]["style_id"].ToString() &&
                             outGoingDT.Rows[i]["color_code"].ToString() == od_infoDB.Rows[j]["clr_no"].ToString() &&
-                            outGoingDT.Rows[i]["OGACDate"].ToString() == od_infoDB.Rows[j]["def_date"].ToString() &&
-                            outGoingDT.Rows[i]["Plant"].ToString() == od_infoDB.Rows[j]["area_id"].ToString() &&
-                            od_infoDB.Rows[j]["def_date"].ToString() != ""
+                            //outGoingDT.Rows[i]["OGACDate"].ToString() == od_infoDB.Rows[j]["def_date"].ToString() &&
+                            //outGoingDT.Rows[i]["Plant"].ToString() == od_infoDB.Rows[j]["area_id"].ToString() &&
+                            //od_infoDB.Rows[j]["def_date"].ToString() != ""
+                            outGoingDT.Rows[i]["GtnPO"].ToString() == od_infoDB.Rows[j]["po_no"].ToString() 
+                            
+                          
                             )
                         {
                             DataRow dr = od_ouDB.NewRow();
@@ -476,13 +511,14 @@ namespace WinForm
                             dr["buy_cname"] = od_infoDB.Rows[j]["buy_cname"].ToString(); // 订单月BUY 中文名
                             dr["color_code"] = outGoingDT.Rows[i]["color_code"].ToString();// 色组 
                             dr["Size1"] = outGoingDT.Rows[i]["Size1"].ToString(); // 尺码
+                             
                             dr["size_qty"] = outGoingDT.Rows[i]["size_qty"].ToString(); // 尺码件数
                             dr["box_qty"] = outGoingDT.Rows[i]["box_qty"].ToString(); // 箱件数
                             dr["kg"] = outGoingDT.Rows[i]["kg"].ToString(); // 箱重量
                             dr["PO_qty"] = outGoingDT.Rows[i]["PO_qty"].ToString(); // 订单数
                             dr["subinv"] = outGoingDT.Rows[i]["subinv"].ToString(); // 仓库码
                             dr["location"] = outGoingDT.Rows[i]["location"].ToString(); // 储位码
-                            dr["mark"] = od_infoDB.Rows[j]["mark"].ToString(); // 备注
+                           // dr["mark"] = od_infoDB.Rows[j]["mark"].ToString(); // 备注
                             dr["TagNumber"] = outGoingDT.Rows[i]["TagNumber"].ToString(); // 外箱条码
                             dr["Create_Pc"] = outGoingDT.Rows[i]["Create_Pc"].ToString(); // 上传电脑名
                             dr["ScanTime"] = outGoingDT.Rows[i]["ScanTime"].ToString(); // 扫描时间
@@ -504,31 +540,98 @@ namespace WinForm
                         }
                     }
                 }
+
+                // 查找 手工入库单 
+
+                // select * from countreceis WHERE org='TOP' and subinv ='TA_HD' and line ='CF36D'  and  `status` = 0   
+                //   public string org = "";
+
+                //查询 
+                DataTable noBarCodeDt = ogm.getReceiFromNoBarCode(org, subinv, location);
+                if (noBarCodeDt.Rows.Count > 0)
+                {
+
+                    /*
+                     org,
+								subinv,
+								line,
+								style,
+								color,
+								size,
+								SUM( qtyCount ) qtyCount,
+								SUM( PO ) OffsetQty,
+								receiNumber ,
+								receiDate
+                     */
+                    for (int i = 0; i < noBarCodeDt.Rows.Count; i++)
+                    {
+                        DataRow dr = od_ouDB.NewRow();
+                        
+                        dr["org"] = noBarCodeDt.Rows[i]["org"].ToString(); // 厂区
+                        dr["cust_id"] = ""; // 客户
+                        dr["season_id"] = ""; // 季节
+                        dr["OrderPO"] = "无条码单"; // 订单PO  成品扫描 
+                        dr["GtnPO"] = "无条码单"; // 出货PO
+                        dr["MAIN_LINE"] = ""; // PO-LINE      
+                        dr["con_no"] = "";// 箱号
+                        dr["Buyer_Item"] = noBarCodeDt.Rows[i]["style"].ToString(); // 款号
+                        dr["yymm"] = ""; // 订单月BUY
+                        dr["buy_cname"] = ""; // 订单月BUY 中文名
+                        dr["color_code"] = noBarCodeDt.Rows[i]["color"].ToString();// 色组 
+                        dr["Size1"] = noBarCodeDt.Rows[i]["size"].ToString(); // 尺码
+                        dr["size_qty"] = noBarCodeDt.Rows[i]["qtyCount"].ToString(); // 尺码件数
+                        dr["box_qty"] = ""; // 箱件数
+                        dr["kg"] = ""; // 箱重量
+                        dr["PO_qty"] = ""; // 款式件数
+                        dr["subinv"] = noBarCodeDt.Rows[i]["subinv"].ToString(); // 仓库码
+                        dr["location"] = noBarCodeDt.Rows[i]["line"].ToString(); // 储位码
+                        dr["mark"] = ""; // 备注
+                        dr["TagNumber"] = ""; // 外箱条码
+                        dr["Create_Pc"] = noBarCodeDt.Rows[i]["receiInPcName"].ToString(); // 上传电脑名
+                        dr["ScanTime"] = noBarCodeDt.Rows[i]["receiDate"].ToString(); // 扫描时间
+                        dr["Update_Date"] = ""; // 上传时间
+                        dr["po_no"] = ""; // 订单PO BEST 
+                        //dr["od_no"] = od_infoDB.Rows[j]["od_no"].ToString(); // 订单号 BEST
+                        dr["od_date"] = ""; // 接单日期
+                        dr["Bcust_id"] = ""; // 客户 
+                        dr["w_id"] = "";// 厂区ID
+                        dr["release_who"] = ""; // 订单业务员
+                        dr["style_id"] = noBarCodeDt.Rows[i]["style"].ToString(); // 款式
+                        dr["clr_no"] = "";  // 色组 
+                        dr["od_type"] = "";// 订单类别
+                        dr["id"] = ""; //数据库ID
+                        od_ouDB.Rows.Add(dr);
+                    }
+
+                }
                
+
+
+
                 barstr.str = "正在查询订单系统资料.";
-                barstr.step = 100;
-                barstr.maxstep = 100;
+                barstr.step = 4;
+                barstr.maxstep = 4;
 
                 barstr.str2 = "正在查询订单系统资料..";
-                barstr.step2 = 99;
-                barstr.maxstep2 = 100;
+                barstr.step2 = 4;
+                barstr.maxstep2 = 4;
                 UpdateUIDelegate(barstr);
 
                 //  this.dgvOutgoingTable.DataSource = null;
                 //  this.dgvOutgoingTable.DataSource = od_ouDB;
                
-                 this.isod_ouDB = true;
-              
+                this.isod_ouDB = true;
+                this.dt.Clear();
                 this.dt = od_ouDB;
 
             }          
             barstr.str = "查询完成.";
-            barstr.step = 100;
-            barstr.maxstep = 100;
+            barstr.step = 0;
+            barstr.maxstep = 0;
 
             barstr.str2 = "查询完成.";
-            barstr.step2 = 100;
-            barstr.maxstep2 = 100;
+            barstr.step2 = 0;
+            barstr.maxstep2 = 0;
             UpdateUIDelegate(barstr);
 
           //  Cursor = Cursors.Default;
@@ -546,7 +649,7 @@ namespace WinForm
             barstr.maxstep2 = 100;
             UpdateUIDelegate(barstr);
 
-            this.dgvOutgoingTable.DataSource = "";
+            this.dgvOutgoingTable.DataSource = null;
             if (this.dt.Rows.Count <= 0)
             {
                 MessageBox.Show("没有资料");
@@ -726,10 +829,12 @@ namespace WinForm
 
         private void RmeExportExcel_Click(object sender, EventArgs e)
         {
-            ImproExcel();
+            int tcindex  = this.tbOut.SelectedIndex ;
+            ImproExcel(tcindex);
         }
-        public void ImproExcel()
+        public void ImproExcel(int tcIndex)
         {
+
             SaveFileDialog sdfExport = new SaveFileDialog();
             sdfExport.Filter = "Excel 97-2003文件|*.xls|Excel 2007文件|*.xlsx";
             //   sdfExport.ShowDialog();
@@ -738,12 +843,30 @@ namespace WinForm
                 return;
             }
             String filename = sdfExport.FileName;
+            String tableName = "";
             NPOIExcelOutGoing NPOIexcel = new NPOIExcelOutGoing();
             DataTable tabl = new DataTable();
-            tabl = GetDgvToTable(dgvOutgoingTable);
+            if(tcIndex <0)
+            {
+                return;
+            }
+            if(tcIndex == 0)
+            {
+                tabl = GetDgvToTable(this.dgvOutgoingTable);
+                 tableName = "dgvOutgoingTable";
+            }
+
+            if(tcIndex == 1)
+            {
+                tabl = GetDgvToTable(this.dgvOutCount);
+                tableName = "dgvOutCount";
+
+            }
+
+          
 
             // DataTable dt = (StyleCodeInfodataGridView.DataSource as DataTable);
-            NPOIexcel.ExcelWrite(filename, tabl);//excelhelper写出
+            NPOIexcel.ExcelWrite(filename, tabl, tableName);//excelhelper写出
             if (MessageBox.Show("导出成功，文件保存在" + filename.ToString() + ",是否打开此文件？", "提示", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 if (File.Exists(filename))//文件是否存在
@@ -842,7 +965,7 @@ namespace WinForm
             */
 
 
-
+            this.splitContainer1.Panel2Collapsed = true;
             tags = this.dgvOutgoingTable["TagNumber", e.RowIndex].Value.ToString();
             DataTable moveLocalDT = ogm.getMoveLocals(tags);
             this.dgvOutMWH.DataSource = null;
@@ -874,6 +997,158 @@ namespace WinForm
             this.dgvOutMWH.Columns["max_time"].DefaultCellStyle.Format = "yyyy-MM-dd hh:mm:ss";
             this.dgvOutMWH.Columns["max_time"].HeaderText = "最后扫描时间";
             this.dgvOutMWH.Columns["Location"].HeaderText = "储位";  
+        }
+
+        private void cbLocation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // 更新总表的转厂数量
+            DataTable styledt = rm.getOutCounts(org, location, subinv);
+        }
+
+        private void butExcelReport_Click(object sender, EventArgs e)
+            
+        {
+            if (this.dt.Rows.Count <= 0)
+            {
+                return;
+            }
+            DataTable disDt = new DataTable();
+            DataView myDataView = new DataView(this.dt);
+            //此处可加任意数据项组合
+            string[] strComuns = { "yymm", "Buyer_Item", "color_code", "GtnPO", "MAIN_LINE", "PO_qty" };
+            disDt = myDataView.ToTable(true, strComuns);
+            if (disDt.Rows.Count < 0)
+            {
+                return;
+            }
+
+            DataTable dataDt = new DataTable();
+            string[] dataComuns = { "ScanTime" };
+            myDataView.Sort = "ScanTime";
+            dataDt = myDataView.ToTable(true, dataComuns);
+          
+            if (dataDt.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            for(int i = 0; i < dataDt.Rows.Count; i++)
+            {
+                string columnName = dataDt.Rows[i]["ScanTime"].ToString();
+                if(columnName.Length <= 0)
+                {
+                    disDt.Columns.Add("无条码入库单");
+                }
+                else
+                {
+                    disDt.Columns.Add(columnName);
+                }
+               
+            }
+            int size_qty = 0;
+            // 填充数量
+            for (int i = 0; i< disDt.Rows.Count; i++)
+            {
+                for( int j = 0; j < this.dt.Rows.Count; j++)
+                {
+                    if (disDt.Rows[i]["yymm"].ToString() == this.dt.Rows[j]["yymm"].ToString() &&
+                        disDt.Rows[i]["Buyer_Item"].ToString() == this.dt.Rows[j]["Buyer_Item"].ToString() &&
+                        disDt.Rows[i]["color_code"].ToString() == this.dt.Rows[j]["color_code"].ToString() &&
+                        disDt.Rows[i]["GtnPO"].ToString() == this.dt.Rows[j]["GtnPO"].ToString() &&
+                        disDt.Rows[i]["MAIN_LINE"].ToString() == this.dt.Rows[j]["MAIN_LINE"].ToString() 
+                        )
+                    {
+                        for(int k = 0; k < disDt.Columns.Count; k++)
+                        {
+                            if (disDt.Columns[k].ToString() == this.dt.Rows[j]["ScanTime"].ToString())
+                            {
+
+                                string  Qtys = this.dt.Rows[j]["size_qty"].ToString();
+                                if(Qtys.Length<=0)
+                                {
+                                    Qtys = "0";
+                                }
+                                if(disDt.Rows[i][k].ToString().Length <= 0)
+                                {
+                                    disDt.Rows[i][k] = 0;
+                                }
+                                disDt.Rows[i][k] = Convert.ToInt32(disDt.Rows[i][k]) + Convert.ToInt32( Qtys);
+                            }
+
+                        }
+
+                    }
+                }
+
+            }
+
+            disDt.Columns.Add("Count");
+            int count = 0;
+            for (int i = 0; i < disDt.Rows.Count; i++)
+            {
+                for(int j = 6; j < disDt.Columns.Count; j++)
+                {
+                    string Qtys =disDt.Rows[i][j].ToString();
+                    if (Qtys.Length <= 0)
+                    {
+                        Qtys = "0";
+                    }
+
+                    count  = count + Convert.ToInt32( Qtys);
+                }
+                disDt.Rows[i]["Count"] = count;
+                count = 0;
+            }
+            this.dgvOutCount.DataSource = null;
+            this.dgvOutCount.DataSource = disDt;
+            this.tbOut.SelectedIndex = 1;
+           
+            ImproExcel(1);
+
+        }
+
+        private void dgvOutCount_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            var dgv = (DataGridView)sender;
+            if (dgv.RowHeadersVisible)
+            {
+                Rectangle rect = new Rectangle(e.RowBounds.Left, e.RowBounds.Top, dgv.RowHeadersWidth, e.RowBounds.Height);
+                rect.Inflate(-2, -2);
+                TextRenderer.DrawText(e.Graphics, (e.RowIndex + 1).ToString(), e.InheritedRowStyle.Font, rect, e.InheritedRowStyle.ForeColor, TextFormatFlags.Right | TextFormatFlags.VerticalCenter);
+            }
+        }
+
+        private void dgvOutCount_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                this.hiedcolumnindex = -1;
+                if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+                {
+                    //若行已是选中状态就不再进行设置
+                    if (this.dgvOutCount.Rows[e.RowIndex].Selected == false)
+                    {
+                        this.dgvOutCount.ClearSelection();
+                        this.dgvOutCount.Rows[e.RowIndex].Selected = true;
+                    }
+                    //只选中一行时设置活动单元格
+                    if (this.dgvOutCount.SelectedRows.Count == 1)
+                    {
+                        this.dgvOutCount.CurrentCell = this.dgvOutCount.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                    }
+                    //弹出操作菜单
+                    MenuRight.Show(MousePosition.X, MousePosition.Y);
+                    // MessageBox.Show("点右键了");
+                }
+
+                else if (e.ColumnIndex >= 0)
+                {
+                    this.hiedcolumnindex = e.ColumnIndex;
+                    MenuRight.Show(MousePosition.X, MousePosition.Y);
+
+                }
+
+            }
         }
     }
 }
