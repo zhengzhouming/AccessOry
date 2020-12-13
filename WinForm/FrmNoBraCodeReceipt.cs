@@ -310,23 +310,27 @@ namespace WinForm
                 if ( qtyCount  > styleCount)
                 {
 
+                    /*
                     MessageBox.Show("转厂入库数信息:" + "\r\n" + @"
                                             厂区:" + org + @"      \r\n  
                                             线别: " + line + @"   \r\n  
                                             款式: " + style + @" \r\n
                                             入库数量: " + qtyCount.ToString() + "  大于 转厂数量  " + styleCount.ToString()
                                             ) ;
-                    return;
+                    */
+                    string mark = "转厂入库数信息--厂区: " + org + " 线别: " + line + " 款式: " + style + " 入库数量: " + qtyCount.ToString() + "  大于 转厂数量  " + styleCount.ToString();
+                      rm.updataReceiError(org, line, style, qtyCount, styleCount,mark);
+                    //  return;
                 }
-                else
-                {
+               // else
+              //  {
                    int w = rm.updataStyleCounts(id, qtyCount);
                     if(w <= 0)
                     {
                         MessageBox.Show("保存失败,请找厂务规划课 小明查找原因 ");
                         return;
                     }
-                }
+              //  }
 
             }
 

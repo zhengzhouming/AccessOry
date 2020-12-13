@@ -366,7 +366,6 @@
             // dgvReceiData
             // 
             this.dgvReceiData.AllowUserToAddRows = false;
-            this.dgvReceiData.AllowUserToDeleteRows = false;
             this.dgvReceiData.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvReceiData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvReceiData.Dock = System.Windows.Forms.DockStyle.Fill;

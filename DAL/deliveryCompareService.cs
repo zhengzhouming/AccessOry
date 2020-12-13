@@ -43,16 +43,22 @@ namespace DAL
             
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                sqlValue = sqlValue +
-                           "(\"" + dt.Rows[i]["lineName"].ToString() + "\",\""
-                               + dt.Rows[i]["deliveryDate"].ToString() + "\",\""
-                               + dt.Rows[i]["invoiceNo"].ToString() + "\",\""
-                               + dt.Rows[i]["styleId"].ToString() + "\",\""
-                               + dt.Rows[i]["gtnPO"].ToString() + "\",\""
-                               + dt.Rows[i]["idNoName"].ToString() + "\",\""
-                               + dt.Rows[i]["colorId"].ToString() + "\",\""
-                               + dt.Rows[i]["sizeName"].ToString() + "\",\""
-                               + dt.Rows[i]["qty"].ToString() + "\",\""
+				string qtys = dt.Rows[i]["qty"].ToString().Trim();
+                if (qtys.Length <= 0 || qtys == "0" )
+				{
+					continue;
+                }
+
+				sqlValue = sqlValue +
+                           "(\"" + dt.Rows[i]["lineName"].ToString().Trim() + "\",\""
+                               + dt.Rows[i]["deliveryDate"].ToString().Trim() + "\",\""
+                               + dt.Rows[i]["invoiceNo"].ToString().Trim() + "\",\""
+                               + dt.Rows[i]["styleId"].ToString().Trim() + "\",\""
+                               + dt.Rows[i]["gtnPO"].ToString().Trim() + "\",\""
+                               + dt.Rows[i]["idNoName"].ToString().Trim() + "\",\""
+                               + dt.Rows[i]["colorId"].ToString().Trim() + "\",\""
+                               + dt.Rows[i]["sizeName"].ToString().Trim() + "\",\""
+                               + qtys + "\",\""
                                + Dns.GetHostName() + "\",\""
                                + 0 + "\",\""
                                + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\" ),";

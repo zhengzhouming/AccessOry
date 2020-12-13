@@ -208,10 +208,99 @@ namespace DAL
 
         public DataTable getStyles(string org,string outLine)
         {
-            string sqlstr = @"select  SHB10 AS STYLE , SUM(SHB111) AS QTY   from  "+ org+".SHB_FILE WHERE  SHB09 =  '"+outLine+ "'  GROUP BY  SHB10 ORDER BY  SHB10";
-            return ERP_SqlHelper.ExcuteTable(sqlstr);
+            DataTable asft = new DataTable();
+            asft.Columns.Add("STYLE");
+            asft.Columns.Add("QTY");
+           
+            string stylestr = "";
+            string str705 = @"select  SHB10 AS STYLE , SUM(SHB111) AS QTY   from  "+ org+".SHB_FILE WHERE  SHB09 =  '"+outLine+ "'  GROUP BY  SHB10 ORDER BY  SHB10";
+            DataTable asft705 =  ERP_SqlHelper.ExcuteTable(str705);
+            for(int i = 0; i < asft705.Rows.Count; i++)
+            {
+                stylestr = asft705.Rows[i]["STYLE"].ToString().ToUpper();
+                if (!isExStyles(stylestr, asft))
+                    {
+                        DataRow row = asft.NewRow();
+                        row["STYLE"] = stylestr;
+                    row["QTY"] = 0;
+                    asft.Rows.Add(row);
+                }
+            }
+
+            string str700 = @"select SGL05 AS STYLE, SUM(SGL08) AS QTY  from SAA.sgl_file where sgl13 = 'CF34D' GROUP BY SGL05 ORDER BY SGL05";
+            DataTable asft700 = ERP_SqlHelper.ExcuteTable(str700);
+            for (int i = 0; i < asft700.Rows.Count; i++)
+            {
+                stylestr = asft700.Rows[i]["STYLE"].ToString().ToUpper();
+                if (!isExStyles(stylestr, asft))
+                {
+                    DataRow row = asft.NewRow();
+                    row["STYLE"] = stylestr;
+                    row["QTY"] = 0;
+                    asft.Rows.Add(row);
+                }
+            }
+
+
+            int qty = 0;
+            for (int i = 0; i < asft.Rows.Count; i++)
+            {
+                for (int j = 0; j < asft700.Rows.Count; j++)
+                {
+                    if (asft.Rows[i]["STYLE"].ToString().ToUpper() == asft700.Rows[j]["STYLE"].ToString().ToUpper())
+                    {
+                        qty = qty + Convert.ToInt32(asft700.Rows[j]["QTY"].ToString());
+                    }
+                }
+                if (qty > 0)
+                {
+                    asft.Rows[i]["QTY"] = Convert.ToInt32( asft.Rows[i]["QTY"].ToString()) + qty;
+                    qty = 0;
+                }
+                
+            }
+
+            int tty = 0;
+            for (int i = 0; i < asft.Rows.Count; i++)
+            {
+                for (int j = 0; j < asft705.Rows.Count; j++)
+                {
+                    if (asft.Rows[i]["STYLE"].ToString().ToUpper() == asft705.Rows[j]["STYLE"].ToString().ToUpper())
+                    {
+                        tty = tty + Convert.ToInt32(asft705.Rows[j]["QTY"].ToString());
+                    }
+                }
+                if (tty > 0)
+                {
+                    asft.Rows[i]["QTY"] = Convert.ToInt32(asft.Rows[i]["QTY"].ToString()) + tty;
+                    tty = 0;
+                }
+               
+            }
+            return asft; 
+             
         }
 
+        public bool isExStyles(string style,DataTable dt)
+        {
+            bool isExStyle = false;
+            if (dt.Rows.Count <= 0)
+            {
+                isExStyle = false;
+            }
+            else
+            {
+                for(int i = 0; i < dt.Rows.Count; i++)
+                {
+                    if(dt.Rows[i]["STYLE"].ToString() == style)
+                    {
+                        isExStyle = true;
+                        break;
+                    }
+                }
+            }
+            return isExStyle;
+        }
 
         public DataTable getColorsByStyle( string style)
         {
@@ -387,6 +476,23 @@ namespace DAL
 	                                AND style = '" + style + "'";
             return Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
         }
+
+        public int updataReceiError(string org, string line, string style, int qtyCount, int styleCount,string mark)
+        {
+            string sqlstr = @"INSERT INTO receierror ( org, line, style, qtyCount, styleCount, createDate, mark )
+                                VALUES
+	                                (
+		                                '"+ org + @"',
+		                                '"+ line + @"',
+		                                '"+ style + @"',
+		                                "+ qtyCount + @",
+		                                "+ styleCount + @",
+		                                '"+ DateTime.Now.ToString("yyyy-MM-dd")+ @"',
+	                                     '"+ mark + "')";
+            int i = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            return i;
+        }
+
 
     }
 }

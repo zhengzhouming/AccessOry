@@ -109,5 +109,13 @@ namespace WinForm
             frm.Activate();
 
         }
+
+        private void pDA管理ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FrmPDAManager frm = FrmPDAManager.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+        }
     }
 }

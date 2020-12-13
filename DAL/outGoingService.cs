@@ -157,52 +157,30 @@ namespace DAL
 			po_no = po_no.Substring(0, po_no.Length - 1);
 
 
-			string sql = @"
-							SELECT b1.po_no,								  
-								   CONVERT(varchar(100),h1.od_date,23)	  od_date,
-								   h1.cust_id,
-								   h1.season_id,
-								   h1.w_id,
-								   h1.release_who,
-								   b1.style_id,
-								   b1.clr_no,
-								  
-								   b1.od_type,
-								
-								   b1.area_id,
-								   buyid.yymm,
-								   buyid.buy_cname
+			string sql = @" 
+							   SELECT b1.po_no,
+							   h1.cust_id,
+							   h1.season_id,
+							   h1.release_who,
+							   b1.style_id,
+							   b1.clr_no
 							FROM dbo.odh h1
 								LEFT JOIN odb b1
 									ON h1.od_no = b1.od_no
 									   AND b1.style_id IN ( " + style_id+ @" )
 									   AND b1.clr_no IN ( " + clr_no + @"  )
-								LEFT JOIN tb_sfcbuy buyid
-									ON CONVERT(DATETIME, h1.od_date)
-									   BETWEEN buyid.begin_day AND buyid.end_day
-									   AND buyid.cust_buy_id = CASE h1.cust_id
-																   WHEN 'A0000' THEN
-																	   'A0001'
-																   ELSE
-																	   'SAB'
-															   END
+								 
 							WHERE b1.po_no IN (  " + po_no + @" )
 								  AND b1.style_id IN ( " + style_id + @" )
 								  AND b1.clr_no IN ( " + clr_no + @"  )
-							GROUP BY b1.po_no,
-									 CONVERT(VARCHAR(100), h1.od_date, 23),
+								  AND b1.po_no != ''
+							  
+							GROUP BY b1.po_no,	            
 									 h1.cust_id,
 									 h1.season_id,
-									 h1.w_id,
 									 h1.release_who,
 									 b1.style_id,
-									 b1.clr_no,
-									
-									 b1.od_type,
-									
-									 b1.area_id,
-									 buyid.yymm,
-									 buyid.buy_cname;";
+									 b1.clr_no;";
 			DataTable result = BEST_SqlHelper.ExcuteTable(sql);
 			return result;
 		}
@@ -244,7 +222,7 @@ namespace DAL
 			return result;
 		}
 
-		public DataTable getReceiFromNoBarCode(string org, string subinv, string location)
+		public DataTable getReceiFromNoBarCode(string org, string subinv, string location, string starTime, string stopTime)
 		{
 
 			string sql = @"
@@ -268,7 +246,7 @@ namespace DAL
 								AND subinv = '"+ subinv + @"'
 								AND line = '"+ location + @"' 
 								AND qtyCount > 0 
-								AND receiDate BETWEEN '2020-11-1' and '2020-11-30'
+								AND receiDate BETWEEN '"+ starTime + "' and '"+ stopTime + @"'
 							GROUP BY
 								org,
 								subinv,
@@ -290,5 +268,52 @@ namespace DAL
 			DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
 			return result;
 		}
+
+
+		/// <summary>
+		/// 从BEST取回月BUY
+		/// </summary>
+		/// <param name="po_no"></param>
+		/// <param name="style_id"></param>
+		/// <param name="clr_no"></param>
+		/// <returns></returns>
+		public DataTable getYYMMFromBestByPo(string po)
+		{
+			string sql = @" SELECT buyid.yymm,
+								   buyid.buy_cname,
+								   b.po_no
+							FROM tb_sfcbuy buyid
+								LEFT JOIN odh h
+									ON h.od_date
+									   BETWEEN buyid.begin_day AND buyid.end_day
+									   AND buyid.cust_buy_id = 'A0001'
+								LEFT JOIN odb b
+									ON b.od_no = h.od_no
+							WHERE b.po_no = '"+ po  + @"'
+							GROUP BY buyid.yymm,
+									 buyid.buy_cname,
+									 b.po_no;";
+			DataTable result = BEST_SqlHelper.ExcuteTable(sql);
+			return result;
+		}
+
+		public DataTable getOffSet(string org, string subinv, string location, string starTime, string stopTime)
+		{
+
+			string sql = @"
+							SELECT
+									TagNumber
+								FROM
+									invreceis 
+								WHERE
+									org = '"+ org +@"' 
+									AND subinv = '"+ subinv +@"' 
+									AND line = '"+ location +@"'
+									AND scantime BETWEEN STR_TO_DATE( '"+ starTime + @"', '%Y-%m-%d' ) 
+									AND STR_TO_DATE( '"+ stopTime+"','%Y-%m-%d' )";
+			DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+			return result;
+		}
+
 	}
 }

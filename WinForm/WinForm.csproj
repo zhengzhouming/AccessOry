@@ -130,6 +130,12 @@
     <Compile Include="FrmNoBraCodeReceipt.Designer.cs">
       <DependentUpon>FrmNoBraCodeReceipt.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmPDAManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmPDAManager.Designer.cs">
+      <DependentUpon>FrmPDAManager.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmPoTradingComanyPO.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -175,6 +181,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmNoBraCodeReceipt.resx">
       <DependentUpon>FrmNoBraCodeReceipt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmPDAManager.resx">
+      <DependentUpon>FrmPDAManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmPoTradingComanyPO.resx">
       <DependentUpon>FrmPoTradingComanyPO.cs</DependentUpon>

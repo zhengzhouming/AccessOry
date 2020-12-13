@@ -82,6 +82,7 @@
     <Compile Include="Mysql_SqlHelper.cs" />
     <Compile Include="nikeConnectService.cs" />
     <Compile Include="outGoingService.cs" />
+    <Compile Include="PDAManagerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="propertysService.cs" />
     <Compile Include="receiServicecs.cs" />

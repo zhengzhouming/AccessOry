@@ -319,6 +319,12 @@ namespace BLL
             return rs.delStyleCount(org, subinv, line, style, size, delQty);
         }
 
+        public int updataReceiError(string org, string line, string style, int qtyCount, int styleCount, string mark)
+        {
+            return rs.updataReceiError(org, line, style, qtyCount, styleCount,mark);
+
+        }
+
 
 
     }

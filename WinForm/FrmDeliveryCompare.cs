@@ -432,9 +432,39 @@ namespace WinForm
             this.dtFormExcel = dcm.ExcelRead(this.fileNameStr, this.sheeTnameStr, this.headNoStr);
             if (this.dtFormExcel.Rows.Count <= 0)
             {
+                this.dtFormExcel = null;
                 MessageBox.Show(null, "读取Excel资料错误,请检查格式是否正确", "Excel文件", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return;
+            }
+            
+            for(int t=0;  t < this.dtFormExcel.Rows.Count; t++){
+                string dd = this.dtFormExcel.Rows[t]["deliveryDate"].ToString();
+                string[] date = dd.Split('-');
+                if (date.Length < 3)
+                {
+                    this.dtFormExcel = null;
+                    this.dtFromWriteExcel = null;
+                    
+                    MessageBox.Show("EXCEL 日期格式不正確："+ dd);
+                    
+                    return;
+                }
+                while (date[0].Length < 4)
+                {
+                    date[0] = "0" + date[0];
+                }
+                while (date[1].Length < 2)
+                {
+                    date[1] = "0" + date[1];
+                }
+                while (date[2].Length < 2)
+                {
+                    date[2] = "0" + date[2];
+                }
+
+                this.dtFormExcel.Rows[t]["deliveryDate"] = date[0] +"-"+ date[1] +"-"+ date[2];
+
             }
             // 写入
             int WResult = dcm.writeCompareFileToDb(dtFormExcel);
@@ -639,6 +669,7 @@ namespace WinForm
 
                
             }
+           
             adt.DefaultView.Sort = "ScanTime";
             this.dtnoEques = adt;
            
@@ -653,11 +684,11 @@ namespace WinForm
             // FrmPacklist.UpdateUI(barstr);
             UpdateUIDelegate(barstr);
             this.dgvExcels.DataSource = "";
-            if (this.dtFormExcel.Rows == null || this.dtFormExcel.Rows.Count <= 0)
+            if (this.dtFormExcel ==  null || this.dtFormExcel.Rows.Count <= 0)
             {
                 return;
             }
-            if (this.dtFromLocalHost.Rows == null || this.dtFromLocalHost.Rows.Count <= 0)
+            if (this.dtFromLocalHost == null || this.dtFromLocalHost.Rows.Count <= 0)
             {
                 return;
             }

@@ -24,6 +24,11 @@ namespace BLL
             return ogs.getOutgoing(org, subinv, location, starTime, stopTime);
         }
 
+        public DataTable getOffSet(string org, string subinv, string location, string starTime, string stopTime)
+        {
+            return ogs.getOffSet(org, subinv, location, starTime, stopTime);
+        }
+
         public DataTable getMoveLocals(string tags)
         {
             return ogs.getMoveLocals(tags);
@@ -47,11 +52,18 @@ namespace BLL
         {
             return ogs.getMy_NoFromBest(po_no,clr_no, style_id, area_id, def_date);
         }
-        public DataTable getReceiFromNoBarCode(string org, string subinv, string location)
+        public DataTable getReceiFromNoBarCode(string org, string subinv, string location, string starTime, string stopTime)
         {
-            return ogs.getReceiFromNoBarCode(org, subinv, location );
+            return ogs.getReceiFromNoBarCode(org, subinv, location, starTime, stopTime);
 
         }
+
+        public DataTable getYYMMFromBestByPo(string po)
+        {
+            return ogs.getYYMMFromBestByPo(po);
+
+        }
+
 
     }
 }
