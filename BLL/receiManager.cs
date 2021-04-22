@@ -278,7 +278,7 @@ namespace BLL
                         )
                     {
                         styleCountDt.Rows[j]["id"] = styleCounts.Rows[i]["id"].ToString();
-                        styleCountDt.Rows[j]["stylecount"] = styleCountDt.Rows[i]["stylecount"].ToString();
+                       // styleCountDt.Rows[j]["stylecount"] = styleCountDt.Rows[j]["stylecount"].ToString();
 
                     }
                 }

@@ -1,6 +1,7 @@
 ﻿using MODEL;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,8 @@ namespace DAL
 {
     public class receiServicecs
     {
+        public static readonly string MiddleWare = ConfigurationManager.ConnectionStrings["EnableMiddleWare"].ConnectionString;
+
         public int writeReceiToData(DataTable dt)
         {
 
@@ -38,7 +41,16 @@ namespace DAL
             sqlValue = sqlValue.Substring(0, sqlValue.Length - 1) + ";";
             string sqlstr = @"INSERT INTO receis (org, subinv, line, style, color, size, qtyCount, po, boxCount, receiNumber, receiDate,receiEmp, mark, receiInDate, receiInPcName,isFull)  VALUES " + sqlValue;
 
-            int result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            int result = 0;
+            
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
             return result;
         }
 
@@ -89,7 +101,16 @@ namespace DAL
                         END		
                     WHERE id IN (1,2,4)
              */
-            int result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            int result =0;
+           
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
             return result;
         }
 
@@ -104,20 +125,49 @@ namespace DAL
         public DataTable getOrg()
         {
             string sqlstr = @"SELECT DISTINCT org,id FROM location  GROUP BY org";
-            return Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            DataTable dt = new DataTable();
+            if (MiddleWare == "1")
+            {
+                dt = MyCatfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            else
+            {
+                dt = Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            return dt;
+
         }
 
 
         public DataTable getSubinvs(string org)
         {
             string sqlstr = @"SELECT DISTINCT subinv,id FROM location  WHERE org ='" + org + "' and subinv like '%HD'  GROUP BY subinv";
-            return Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+           
+            DataTable dt = new DataTable();
+            if (MiddleWare == "1")
+            {
+                dt = MyCatfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            else
+            {
+                dt = Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            return dt;
         }
 
         public DataTable getLocations(string org, string subinv)
         {
             string sqlstr = @"SELECT DISTINCT location,id FROM location  WHERE org ='" + org + "' and subinv = '" + subinv + "'  AND LOCATION LIKE 'CF%D'  GROUP BY location";
-            return Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            DataTable dt = new DataTable();
+            if (MiddleWare == "1")
+            {
+                dt = MyCatfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            else
+            {
+                dt = Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            return dt;
         }
 
         public DataTable getReceis(receiSearch rs)
@@ -202,7 +252,17 @@ namespace DAL
 	                            style,
 	                            color,
 	                            size";
-            return Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            
+            DataTable dt = new DataTable();
+            if (MiddleWare == "1")
+            {
+                dt = MyCatfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            else
+            {
+                dt = Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            return dt;
         }
 
 
@@ -227,7 +287,7 @@ namespace DAL
                 }
             }
 
-            string str700 = @"select SGL05 AS STYLE, SUM(SGL08) AS QTY  from SAA.sgl_file where sgl13 = 'CF34D' GROUP BY SGL05 ORDER BY SGL05";
+            string str700 = @"select SGL05 AS STYLE, SUM(SGL08) AS QTY  from " + org + ".sgl_file where sgl13 = '" + outLine + "'  GROUP BY SGL05 ORDER BY SGL05";
             DataTable asft700 = ERP_SqlHelper.ExcuteTable(str700);
             for (int i = 0; i < asft700.Rows.Count; i++)
             {
@@ -333,7 +393,17 @@ namespace DAL
         public int delRowsByID(  int id)
         {
             string sqlstr = @"UPDATE receis set isFull =1 WHERE id =" + id ;
-            return Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+
+            int result = 0;
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            return result;
         }
 
         public DataTable getStyleCounts(string org, string outsubinv, string outLine)
@@ -352,7 +422,17 @@ namespace DAL
 	                                AND subinv = '" + outsubinv + @"' 
 	                                AND line = '" + outLine + @"' 
 	                                AND STATUS = 0";
-            return Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            
+            DataTable dt = new DataTable();
+            if (MiddleWare == "1")
+            {
+                dt = MyCatfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            else
+            {
+                dt = Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            return dt;
         }
 
         public DataTable getStyleCounts(string org, string outsubinv, string outLine,string  style)
@@ -369,8 +449,18 @@ namespace DAL
 	                                AND line = '" + outLine + @"' 
                                     AND style = '" + style + @"'
 	                                AND STATUS = 0";
-             DataTable dt = Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
-            
+              
+            DataTable dt = new DataTable();
+            if (MiddleWare == "1")
+            {
+                dt = MyCatfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            else
+            {
+                dt = Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+             
+
             return dt;
         }
 
@@ -398,7 +488,18 @@ namespace DAL
 
             string sqlstr = @"INSERT INTO countreceis ( Org, subinv, line, style, stylecount, qtyCount, receiInDate, STATUS )
                                                 VALUES " + values;
-            return Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+           
+
+            int result = 0;
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            return result;
         }
 
         public int updataByID(DataTable dt)
@@ -421,15 +522,35 @@ namespace DAL
                 sqlID = sqlID.Substring(0, sqlID.Length - 1);            
                 sqlCASE = sqlCASE.Substring(0, sqlCASE.Length - 1);           
             string sqlstr = @"UPDATE countreceis SET stylecount = CASE id   " + sqlCASE + @"  END  WHERE id IN (" + sqlID + ")";
-            return Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+           
+            int result = 0;
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            return result;
         }
 
 
         public int updataStyleCounts(int id, int qtyCount)
         {
             string sqlstr = @"UPDATE  countreceis   set  qtyCount = " + qtyCount + "  WHERE ID="+id;
-             int i = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
-            return i;
+           
+            int result = 0;
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            return result;
+            
         }
 
 
@@ -462,7 +583,17 @@ namespace DAL
                                     AND size ='"+ size + @"'
                                     AND color ='" + color + @"'
 	                                AND isFull = 0";
-            return Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+          
+            DataTable dt = new DataTable();
+            if (MiddleWare == "1")
+            {
+                dt = MyCatfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            else
+            {
+                dt = Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            return dt;
         }
 
         public int delStyleCount(string org, string subinv, string line, string style, string size, int delQty)
@@ -474,7 +605,17 @@ namespace DAL
 	                                AND subinv = '" + subinv + @"' 
 	                                AND line = '" + line + @"' 
 	                                AND style = '" + style + "'";
-            return Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            
+            int result = 0;
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            return result;
         }
 
         public int updataReceiError(string org, string line, string style, int qtyCount, int styleCount,string mark)
@@ -489,8 +630,18 @@ namespace DAL
 		                                "+ styleCount + @",
 		                                '"+ DateTime.Now.ToString("yyyy-MM-dd")+ @"',
 	                                     '"+ mark + "')";
-            int i = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
-            return i;
+           
+            int result = 0;
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            return result;
+            
         }
 
 

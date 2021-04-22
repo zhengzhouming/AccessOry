@@ -356,7 +356,7 @@
             // 
             // RmeCopyCells
             // 
-            this.RmeCopyCells.Image = global::WinForm.Properties.Resources.icons8_复制_64;
+           // this.RmeCopyCells.Image = global::WinForm.Properties.Resources.icons8_复制_64;
             this.RmeCopyCells.Name = "RmeCopyCells";
             this.RmeCopyCells.Size = new System.Drawing.Size(143, 22);
             this.RmeCopyCells.Text = "CopyCells";
@@ -364,7 +364,7 @@
             // 
             // RmeCopyRows
             // 
-            this.RmeCopyRows.Image = global::WinForm.Properties.Resources.icons8_复制_48;
+           // this.RmeCopyRows.Image = global::WinForm.Properties.Resources.icons8_复制_48;
             this.RmeCopyRows.Name = "RmeCopyRows";
             this.RmeCopyRows.Size = new System.Drawing.Size(143, 22);
             this.RmeCopyRows.Text = "CopyRows";
@@ -372,7 +372,7 @@
             // 
             // RmeExportExcel
             // 
-            this.RmeExportExcel.Image = global::WinForm.Properties.Resources.Excel_32px_1185986_easyicon_net;
+            //this.RmeExportExcel.Image = global::WinForm.Properties.Resources.Excel_32px_1185986_easyicon_net;
             this.RmeExportExcel.Name = "RmeExportExcel";
             this.RmeExportExcel.Size = new System.Drawing.Size(143, 22);
             this.RmeExportExcel.Text = "ExportExcel";

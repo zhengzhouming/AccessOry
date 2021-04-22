@@ -117,5 +117,82 @@ namespace WinForm
             frm.Show();
             frm.Activate();
         }
+
+        private void MenuNumber_Click(object sender, EventArgs e)
+        {
+            FrmPO_MyNo frm = FrmPO_MyNo.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+
+        }
+
+        private void MenuTNFImport_Click(object sender, EventArgs e)
+        {
+            FrmImportVF frm = FrmImportVF.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+        }
+
+        private void MenuTNFScan_Click(object sender, EventArgs e)
+        {
+            FrmTNFScan frm = FrmTNFScan.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+        }
+
+        private void MenuMesEmployee_Click(object sender, EventArgs e)
+        {
+            FrmMesEmployee frm = FrmMesEmployee.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+
+        }
+
+        private void MenuCompletedToMes_Click(object sender, EventArgs e)
+        {
+            CompletedToMesLogin frm = CompletedToMesLogin.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+ 
+        }
+
+        private void MenuInvoicePrint_Click(object sender, EventArgs e)
+        {
+            FrmInvoicePrint frm = FrmInvoicePrint.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+        }
+
+        private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (this.MdiChildren.Length > 0)   //当子窗体个数大于0的时候遍历所有子窗体
+            {
+                foreach (Form myForm in this.MdiChildren)// 遍历所有子窗体
+                    myForm.Close(); //关闭子窗体
+            }
+            System.Environment.Exit(0);
+        }
+
+        private void MenuCompletedSearch_Click(object sender, EventArgs e)
+        {
+            FrmCompletedSearch frm = FrmCompletedSearch.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+        }
+
+        private void MenuDelScan_Click(object sender, EventArgs e)
+        {
+            FrmDelScanHURLEY frm = FrmDelScanHURLEY.GetSingleton();
+            frm.MdiParent = this;
+            frm.Show();
+            frm.Activate();
+        }
     }
 }

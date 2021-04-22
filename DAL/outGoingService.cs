@@ -1,6 +1,7 @@
 ﻿using MODEL;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -9,18 +10,40 @@ namespace DAL
 {
    public  class outGoingService
     {
-        public DataTable getSubinvs(string org)
+		public static readonly string MiddleWare = ConfigurationManager.ConnectionStrings["EnableMiddleWare"].ConnectionString;
+
+		public DataTable getSubinvs(string org)
         {
 			string sql = @"SELECT DISTINCT subinv FROM location  WHERE org='" + org + "'";
-            DataTable  result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
-            return result;
+           
+         
+
+			DataTable result = new DataTable();
+			if (MiddleWare == "1")
+			{
+				result = MyCatfsg_SqlHelper.ExcuteTable(sql);
+			}
+			else
+			{
+				result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+			}
+			return result;
 		}
 
         public DataTable getLocation(string subinv)
         {
 			string sql = @"SELECT DISTINCT Location FROM location  WHERE subinv='" + subinv + "'";
-            DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
-            return result;
+            
+			DataTable result = new DataTable();
+			if (MiddleWare == "1")
+			{
+				result = MyCatfsg_SqlHelper.ExcuteTable(sql);
+			}
+			else
+			{
+				result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+			}
+			return result;
 		}
 
         public DataTable getOutgoing(string org, string subinv, string location, string starTime, string stopTime)
@@ -101,8 +124,17 @@ namespace DAL
 														 and n.POItem = p.MAIN_LINE
 									LEFT JOIN gtn_po  g on g.GTN_PO =  p.PO
 									ORDER BY a.con_no, d.Size1 + 0";
-			DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
-            return result;
+			 
+			DataTable result = new DataTable();
+			if (MiddleWare == "1")
+			{
+				result = MyCatfsg_SqlHelper.ExcuteTable(sql);
+			}
+			else
+			{
+				result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+			}
+			return result;
 		}
 
 		public DataTable getMoveLocals(string tags)
@@ -124,7 +156,16 @@ namespace DAL
 								ScanTime DESC 
 								LIMIT 0,
 								1";
-			DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+			 
+			DataTable result = new DataTable();
+			if (MiddleWare == "1")
+			{
+				result = MyCatfsg_SqlHelper.ExcuteTable(sql);
+			}
+			else
+			{
+				result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+			}
 			return result;
 		}
 
@@ -246,7 +287,8 @@ namespace DAL
 								AND subinv = '"+ subinv + @"'
 								AND line = '"+ location + @"' 
 								AND qtyCount > 0 
-								AND receiDate BETWEEN '"+ starTime + "' and '"+ stopTime + @"'
+								AND isFull = 0
+								AND receiDate BETWEEN '" + starTime + "' and '"+ stopTime + @"'
 							GROUP BY
 								org,
 								subinv,
@@ -265,7 +307,16 @@ namespace DAL
 								style,
 								color,
 								size;";
-			DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+			 
+			DataTable result = new DataTable();
+			if (MiddleWare == "1")
+			{
+				result = MyCatfsg_SqlHelper.ExcuteTable(sql);
+			}
+			else
+			{
+				result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+			}
 			return result;
 		}
 
@@ -311,7 +362,16 @@ namespace DAL
 									AND line = '"+ location +@"'
 									AND scantime BETWEEN STR_TO_DATE( '"+ starTime + @"', '%Y-%m-%d' ) 
 									AND STR_TO_DATE( '"+ stopTime+"','%Y-%m-%d' )";
-			DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+			 
+			DataTable result = new DataTable();
+			if (MiddleWare == "1")
+			{
+				result = MyCatfsg_SqlHelper.ExcuteTable(sql);
+			}
+			else
+			{
+				result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+			}
 			return result;
 		}
 

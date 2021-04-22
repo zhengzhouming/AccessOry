@@ -3528,6 +3528,9 @@ namespace WinForm
 
         private void btPrint_Click(object sender, EventArgs e)
         {
+
+           
+
             FrmAccessOryPrint frm = FrmAccessOryPrint.GetSingleton(this.reNo,this.reNoBatch);
            // frm.MdiParent = this;
             frm.Show();

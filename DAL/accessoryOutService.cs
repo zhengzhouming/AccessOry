@@ -13,6 +13,7 @@ namespace DAL
 {
     public class accessoryOutService
     {
+        public static readonly string MiddleWare = ConfigurationManager.ConnectionStrings["EnableMiddleWare"].ConnectionString;
 
         public   List<accessoryOut> getAccessoryOutByParameters(List<parameter> parameter,string Org)
         {
@@ -128,8 +129,17 @@ namespace DAL
                                 };
              DataTable dt = ERP_SqlHelper.ExcuteTable(sqlstr, ps);
             */
-            DataTable dt = ERP_SqlHelper.ExcuteTable(sqlstr);
 
+
+            DataTable dt = new DataTable();
+            if (MiddleWare == "1")
+            {
+                dt = MyCatfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            else
+            {
+                dt = Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            } 
             List<MODEL.accessoryOut> lists = null;
             if (dt.Rows.Count > 0)
             {
@@ -328,7 +338,16 @@ namespace DAL
 
                     )  VALUES " + sqlValue ;
 
-           int result = Mysql_SqlHelper.ExecuteNonQuery(sqlstr);
+            int result = 0;             
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+
             return result;
 
         }
@@ -360,17 +379,39 @@ namespace DAL
                         receiveNumberBatch = CASE id " +
                            receiveNumberBatch_Value + @"
                         END  
-                    WHERE id IN (" + id_Value + ")";
-            
-            int result = Mysql_SqlHelper.ExecuteNonQuery(sqlstr);
+                    WHERE id IN (" + id_Value + ")"; 
+
+            int result = 0;
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+
             return result;
+
 
         }
 
         public List<accessoryOut> getAccessoryOutByLocalHostDB(string mynumber)
         {
             string sqlstr = @"SELECT * FROM  `accessoryout`  where   my_no= '" + mynumber +"'" ;
-            DataTable dt = Mysql_SqlHelper.ExcuteTable(sqlstr);
+            DataTable dt = new DataTable();
+ 
+            if (MiddleWare == "1")
+            {
+                dt = MyCatfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            else
+            {
+                dt = Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+
+         
+
             List<MODEL.accessoryOut> lists = null;
             if (dt.Rows.Count > 0)
             {
@@ -389,13 +430,35 @@ namespace DAL
         public int delAccessoryOutFromLocalHostDBByMyNumber(string mynumber)
         {
             string sqlstr = @"delete FROM accessoryout where my_no='" + mynumber + "'";
-            return Mysql_SqlHelper.ExecuteNonQuery(sqlstr);
+          
+            int result = 0;
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+
+            return result;
         }
 
         public int updataAccessoryOutFromLocalHostDBByMyNumber(string mynumber)
         {
             string sqlstr = @"UPDATE accessoryout set materialStatus='E' where  my_no='" + mynumber + "'";
-            return Mysql_SqlHelper.ExecuteNonQuery(sqlstr);
+            
+            int result = 0;
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+
+            return result;
         }
 
 
@@ -434,9 +497,15 @@ namespace DAL
 
             }
             sqlstr = sqlstr + sqlwhere;
-
-           
-            DataTable dt = Mysql_SqlHelper.ExcuteTable(sqlstr);
+            DataTable dt = new DataTable();            
+            if (MiddleWare == "1")
+            {
+                dt = MyCatfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            else
+            {
+                dt = Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            }   
 
             List<MODEL.accessoryOut> lists = null;
             if (dt.Rows.Count > 0)
@@ -1025,7 +1094,17 @@ and(size != '' or size is null)  group by od_no,style_id,mas_id,color_no,size--s
 	                                size,
 	                                pu_no";
 
-            DataTable dt = Mysql_SqlHelper.ExcuteTable(sqlstr);
+            DataTable dt = new DataTable();            
+            if (MiddleWare == "1")
+            {
+                dt = MyCatfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            else
+            {
+                dt = Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+          
+
             List<MODEL.materials> lists = null;
             if (dt.Rows.Count > 0)
             {
@@ -1124,8 +1203,18 @@ and(size != '' or size is null)  group by od_no,style_id,mas_id,color_no,size--s
             string sqlstr = @"select MAX(receiveNumber) FROM accessoryout  WHERE receiveNumber LIKE '"+ receive + "%'";
             int receives = 0;
             string reis = "";
-            DataTable dt = Mysql_SqlHelper.ExcuteTable(sqlstr);
-            if(dt.Rows.Count > 0)
+            DataTable dt = new DataTable(); 
+            if (MiddleWare == "1")
+            {
+                dt = MyCatfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            else
+            {
+                dt = Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            } 
+
+
+            if (dt.Rows.Count > 0)
             {
               reis = dt.Rows[0][0].ToString();
             }
@@ -1269,9 +1358,16 @@ and(size != '' or size is null)  group by od_no,style_id,mas_id,color_no,size--s
 
                     )  VALUES " + sqlValue;
 
-            int result = Mysql_SqlHelper.ExecuteNonQuery(sqlstr);
+            int result = 0; 
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
             return result;
-
         }
 
 
@@ -1279,7 +1375,17 @@ and(size != '' or size is null)  group by od_no,style_id,mas_id,color_no,size--s
         {
             //SELECT * from accessoryouth where receiveNumber ='DA2010000001'  and receiveNumberBatch='04'
             string sqlstr = @"SELECT * from accessoryouth where receiveNumber ='" + reno + "' and receiveNumberBatch= '" + renoBatch + "'";
-            DataTable dt = Mysql_SqlHelper.ExcuteTable(sqlstr);  
+           
+           
+            DataTable dt = new DataTable();
+            if (MiddleWare == "1")
+            {
+                dt = MyCatfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
+            else
+            {
+                dt = Mysqlfsg_SqlHelper.ExcuteTable(sqlstr);
+            }
             return dt;
 
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -8,11 +9,24 @@ namespace DAL
 {
     public class tradingComanyPOService
     {
+        public static readonly string MiddleWare = ConfigurationManager.ConnectionStrings["EnableMiddleWare"].ConnectionString;
+
         public int isHaveByTradingComanyPO(string Tpo)
         {
             string sql = @"SELECT GTN_PO FROM `gtn_po` WHERE GTN_PO ='"+ Tpo + "'";           
-            DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
-            return result.Rows.Count;
+          //  DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+            DataTable dt = new DataTable();
+            if (MiddleWare == "1")
+            {
+                dt = MyCatfsg_SqlHelper.ExcuteTable(sql);
+            }
+            else
+            {
+                dt = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+            }
+           // return dt;
+
+            return dt.Rows.Count;
         }
         public int writeGtnsToDb(DataTable dt)
         {
@@ -30,8 +44,18 @@ namespace DAL
             sqlstr = @"INSERT INTO gtn_po ( PO, GTN_PO, create_pc, update_date
                     )  VALUES " + sqlValue;
 
-            int result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
-            return result;
+          //  int result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            //  DataTable dt = new DataTable();
+            int result = 0;
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+             return result;
         }
 
 
@@ -58,7 +82,18 @@ namespace DAL
 	                            AND ID NOT IN ( select b.id from ( SELECT max( ID ) id FROM GTN_PO GROUP BY po, gtn_po HAVING count(*)> 1 ) b )
 
                             ";
-            int result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sql);
+          //  int result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sql);
+           
+           
+            int result = 0;
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sql);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sql);
+            }
             return result;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,19 @@ namespace DAL
 {
     public class nikeConnectService
     {
+        public static readonly string MiddleWare = ConfigurationManager.ConnectionStrings["EnableMiddleWare"].ConnectionString;
         public int isHaveByNikeConnect(string Npo)
         {
             string sql = @"SELECT PONumber from nikeconnect WHERE PONumber ='" + Npo + "'";
-            DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+            DataTable result = new DataTable();            
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExcuteTable(sql);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+            }
             return result.Rows.Count;
         }
         public int writeNcsToDb(DataTable dt)
@@ -86,7 +96,16 @@ namespace DAL
                                                  TradingCoGrossUnitPrice,TradingCoNetUnitPrice
                     )  VALUES " + sqlValue;
 
-            int result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            int result =0; 
+           
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+            }
             return result;
         }
 
@@ -134,7 +153,18 @@ namespace DAL
 	                                    FROM
 	                                    ( SELECT max( ID ) id FROM nikeconnect GROUP BY PONumber, TradingCompanyPO, POItem, OGACDate, Plant HAVING count(*)> 1 ) b 
 	                                    )";
-            int result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sql);
+            int result = 0;
+            
+
+            
+            if (MiddleWare == "1")
+            {
+                result = MyCatfsg_SqlHelper.ExecuteNonQuery(sql);
+            }
+            else
+            {
+                result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sql);
+            }
             return result;
         }
     }

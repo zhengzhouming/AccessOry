@@ -15,14 +15,14 @@ namespace BLL
             return sizeS.getSizeRunByMy_no(my_no);
           
         }
-        public DataTable getClr_noByMy_no(string my_no)
+        public DataTable getClr_noByMy_no(string[] parameters)
         {
-            return sizeS.getClr_noByMy_no(my_no);
+            return sizeS.getClr_noByMy_no(parameters);
 
         }
-        public DataTable getSizeByMy_no(string my_no)
+        public DataTable getSizeByMy_no(string my_nos)
         {
-            return sizeS.getSizeByMy_no(my_no);
+            return sizeS.getSizeByMy_no(my_nos);
 
         }
 

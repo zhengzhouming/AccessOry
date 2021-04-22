@@ -13,8 +13,7 @@ namespace WinForm
         public void ExcelWrite(string file, DataTable tabl,string tableName)
         {
             try
-            {
-                
+            {              
 
                 using (ExcelOutGoing excelHelper = new ExcelOutGoing(file))
                 {

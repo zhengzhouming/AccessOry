@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 
@@ -84,23 +85,62 @@ namespace DAL
             DataTable dt = BEST_SqlHelper.ExcuteTable(sqlstr);
             return dt;
         }
-        public DataTable getClr_noByMy_no(string my_no)
+        public DataTable getClr_noByMy_no(string[] parameters)
         {
             string sqlstr = @"SELECT DISTINCT
                                        b.clr_no	,
 	                                   b.style_id,
-	                                   h. my_no,
+	                                   h.my_no,
 	                                   h.cust_id
                                 FROM odh h
                                     LEFT JOIN odb b
                                         ON h.od_no = b.od_no
-                                WHERE h.my_no ='" + my_no + "'";
-            DataTable dt = BEST_SqlHelper.ExcuteTable(sqlstr);
+                                WHERE  1=1 
+                                and   h.my_no LIKE +'%'+  ISNULL(@my_no,h.my_no)  +'%'  
+                                and   b.style_id LIKE +'%'+  ISNULL(@style_id,b.style_id) +'%'";
+
+            object my_no =  DBValue(parameters[0]);
+            object style_id = DBValue(parameters[1]);
+            SqlParameter[] paras =   {
+                    new SqlParameter("@my_no", my_no),
+                    new SqlParameter("@style_id", style_id)
+                 };             
+           
+            DataTable dt = BEST_SqlHelper.ExcuteTable(sqlstr, paras);
             return dt;
         }
-        public DataTable getSizeByMy_no(string my_no)
+
+        public  object DBValue(object obj)
         {
-            string sqlstr = @" select us01,us02,us03,us04,us05,us06,us07,us08,us09,us10,us11,us12 FROM  odh  where   my_no ='" + my_no + "'";
+            if (obj == null)
+            {
+                return DBNull.Value;
+            }
+            else
+            {
+                return obj;
+            }
+        }
+
+        public DataTable getSizeByMy_no(string my_nos)
+        {
+            string sqlstr = @"SELECT my_no,
+                                       us01,
+                                       us02,
+                                       us03,
+                                       us04,
+                                       us05,
+                                       us06,
+                                       us07,
+                                       us08,
+                                       us09,
+                                       us10,
+                                       us11,
+                                       us12
+                                FROM odh
+                                WHERE 1 = 1
+                                      AND my_no IN ( " + my_nos + @" );";
+
             DataTable dt = BEST_SqlHelper.ExcuteTable(sqlstr);
             return dt;
         }

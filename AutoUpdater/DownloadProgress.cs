@@ -45,6 +45,7 @@ namespace zengzhouming.Update
             evtDownload = new ManualResetEvent(true);
             evtDownload.Reset();
             Thread t = new Thread(new ThreadStart(ProcDownload));
+            t.IsBackground = true;
             t.Name = "download";
             t.Start();
         }

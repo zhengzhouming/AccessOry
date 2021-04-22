@@ -39,15 +39,14 @@ namespace WinForm
        
         private void FrmAccessOryPrint_Load(object sender, EventArgs e)
         {
-           // MessageBox.Show( reno,  renoBatch);
-            // List<accessoryOut> accessorytb = accoryOut.getAccessoryOutByLocalHostDB(items, Org);
+           
             //自定义数据源
             DataTable accessorydt = accoryOut.getAccessoryhByreceiveNumber(reno, renoBatch);
             this.reportViewer1.RefreshReport(); 
 
             //自定义参数
             List<ReportParameter> list = new List<ReportParameter>();
-            ReportParameter rp = new ReportParameter("pid", "11");
+            ReportParameter rp = new ReportParameter("tagInvoice", "11");
             list.Add(rp);
 
             this.reportViewer1.LocalReport.ReportPath = Application.StartupPath + "\\ReportAccessOryOut.rdlc";

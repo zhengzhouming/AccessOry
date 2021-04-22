@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using Pomelo.Data.MyCat;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -33,16 +34,18 @@ namespace DAL
                 return value;
             }
         }
+        
+
         public static int ExecuteNonQuery(string sqlstr)
         {
 
-           MySqlConnection conn = null; 
+            MySqlConnection conn = null;
             try
             {
                 conn = OpenConn();
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = sqlstr;
-                cmd.CommandType = CommandType.Text; 
+                cmd.CommandType = CommandType.Text;
                 int result = cmd.ExecuteNonQuery();
 
                 CloseConn(conn);
@@ -57,16 +60,19 @@ namespace DAL
             {
                 CloseConn(conn);
             }
-           
+
         }
-        public static MySqlConnection OpenConn()
+        public static MySqlConnection OpenConn() 
         {
-            MySqlConnection conn = new MySqlConnection();
+           MySqlConnection conn = new MySqlConnection();
+            
             conn.ConnectionString = MySqlconnStr_fsg;
             conn.Open();
             return conn;
         }
+        
 
+         
         public static void CloseConn(MySqlConnection conn)
         {
             if (conn == null) { return; }
@@ -93,18 +99,18 @@ namespace DAL
             MySqlConnection conn = null;
             try
             {
-                conn = OpenConn();
+                 conn = OpenConn();
+              // MyCatConnection mconn = OpenMyCatConn();
                 var cmd = conn.CreateCommand();
                 cmd.CommandTimeout = 0;
                 cmd.CommandText = sqlstr;
                 cmd.CommandType = CommandType.Text;
                 MySqlDataAdapter da = new MySqlDataAdapter();
                 da.SelectCommand = cmd;
-               var reader  = cmd.ExecuteReader();
-                CloseConn(conn);
+                var reader  = cmd.ExecuteReader();
+                CloseConn(conn);               
                 DataTable dt = new DataTable();
-                da.Fill(dt);
-                
+                da.Fill(dt);                
                 return dt;
             }
             catch (Exception ex)
@@ -117,9 +123,79 @@ namespace DAL
             {
                 CloseConn(conn);
             }
+        }
+
+        
+
+        public static int ExecuteNonQuery(string sqlstr,MySqlParameter[] parameters)
+        {
+
+            MySqlConnection conn = null;
+            try
+            {
+                conn = OpenConn();
+                var cmd = conn.CreateCommand();
+                cmd.CommandTimeout = 0;
+                cmd.CommandText = sqlstr;
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddRange(parameters);
+                MySqlDataAdapter da = new MySqlDataAdapter();
+                da.SelectCommand = cmd;
+               // var reader = cmd.ExecuteReader();
+                int execute = cmd.ExecuteNonQuery();
+                CloseConn(conn);
+              //  DataTable dt = new DataTable();
+               // da.Fill(dt);
+                return execute;
+            }
+            catch (Exception ex)
+            { 
+                return -1;
+            }
+            finally
+            {
+                CloseConn(conn);
+            }
 
         }
 
-       
+ 
+
+
+        public static DataTable ExcuteTable(string sqlstr, MySqlParameter[] parameters)
+        {
+
+            MySqlConnection conn = null;
+            try
+            {
+                conn = OpenConn();
+                var cmd = conn.CreateCommand();
+                cmd.CommandTimeout = 0;
+                cmd.CommandText = sqlstr;
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddRange(parameters);
+                MySqlDataAdapter da = new MySqlDataAdapter();
+                da.SelectCommand = cmd;
+                 var reader = cmd.ExecuteReader();
+                // int execute = cmd.ExecuteNonQuery();
+                CloseConn(conn);
+                  DataTable dt = new DataTable();
+                 da.Fill(dt);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                DataTable dt = new DataTable();               
+                return dt;
+            }
+            finally
+            {
+                CloseConn(conn);
+            }
+
+        }
+        
+ 
+
     }
 }

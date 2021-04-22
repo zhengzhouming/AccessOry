@@ -230,7 +230,7 @@ namespace COMMON
                                     //是日期型
                                     if (HSSFDateUtil.IsCellDateFormatted(row.GetCell(j)))
                                     {
-                                        datastr = row.GetCell(j).DateCellValue.ToString("yyyy-MM-dd");
+                                        datastr = row.GetCell(j).DateCellValue.ToString("yyyy-MM-dd HH:mm:ss");
                                         dataRow[j] = datastr;
                                     }
                                     else
@@ -244,6 +244,12 @@ namespace COMMON
                                 }
                                 /**********/
                                 string va = dataRow[j].ToString();
+                                while (j == 6 && va.Length <= 2)
+                                {
+                                    va = "0" + va;
+ 
+                                }
+                                 
                                 bool r = IsDateTime(va);
                                 if (r)
                                 {

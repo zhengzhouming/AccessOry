@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Net;
@@ -9,19 +10,40 @@ namespace DAL
 {
     public class deliveryCompareService
     {
-        public DataTable getSubinv(string org)
+		public string MiddleWare = ConfigurationManager.ConnectionStrings["EnableMiddleWare"].ConnectionString;
+		public DataTable getSubinv(string org)
         {
             string sql = @"SELECT DISTINCT subinv from location WHERE ORG ='"+ org + "' AND subinv LIKE '%HD'";
-            DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
-            return result;
-        }
+          
+			DataTable dt = new DataTable();
+			if (MiddleWare == "1")
+			{
+				dt = MyCatfsg_SqlHelper.ExcuteTable(sql);
+			}
+			else
+			{
+				dt = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+			}
+
+			return dt;
+		}
 
         public DataTable getLocations(string org, string  subinv)
         {
             string sql = @"SELECT DISTINCT location  from location WHERE ORG ='"+ org + @"' and subinv ='"+ subinv + "' AND location LIKE 'CF%D'";
-            DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
-            return result;
-        }
+            
+			DataTable dt = new DataTable();
+			if (MiddleWare == "1")
+			{
+				dt = MyCatfsg_SqlHelper.ExcuteTable(sql);
+			}
+			else
+			{
+				dt = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+			}
+
+			return dt;
+		}
 
         public int writeCompareFileToDb(DataTable dt)
         {
@@ -35,7 +57,14 @@ namespace DAL
 								WHERE
 									Create_Pc = '" + Dns.GetHostName() +@"' 
 									AND isDel =0 ";
-			Mysqlfsg_SqlHelper.ExecuteNonQuery(upsql);
+			if (MiddleWare == "1")
+			{
+				  MyCatfsg_SqlHelper.ExecuteNonQuery(upsql);
+			}
+			else
+			{
+				 Mysqlfsg_SqlHelper.ExecuteNonQuery(upsql);
+			}
 
 			// 再更新这次上传的资料
 			string sqlstr = "";
@@ -66,17 +95,29 @@ namespace DAL
             sqlValue = sqlValue.Substring(0, sqlValue.Length - 1) + ";";
             sqlstr = @"INSERT INTO delivertb (  lineName, deliveryDate, invoiceNo, styleId, gtnPO, idNoName, colorId, sizeName, qty,create_pc,isDel,createDate )  VALUES " + sqlValue;
 
-            int result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
-            return result;
-        }
+			int result = 0;
+         
+
+			 
+			if (MiddleWare == "1")
+			{
+				result = MyCatfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+			}
+			else
+			{
+				result = Mysqlfsg_SqlHelper.ExecuteNonQuery(sqlstr);
+			}
+
+			return result;
+		}
 
         public DataTable getLocalHostDt(string starTime, string stopTime, string org, string subinv, List<string> location)
 		{
 			string locations = "";
             if (location.Count <= 0)
             {
-				DataTable dt = new DataTable();
-				return dt;
+				DataTable Nulldt = new DataTable();
+				return Nulldt;
             }
 			for( int i=0; i< location.Count; i++)
             {
@@ -183,9 +224,19 @@ namespace DAL
 									DATE_FORMAT( a.ScanTime, '%Y-%m-%d' ) ,
 									a.con_no,
 									d.Size1 + 0;";
-            DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
-            return result;
-        }
+           
+			DataTable dt = new DataTable();
+			if (MiddleWare == "1")
+			{
+				dt = MyCatfsg_SqlHelper.ExcuteTable(sql);
+			}
+			else
+			{
+				dt = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+			}
+
+			return dt;
+		}
 
 		public DataTable getFromWriteExcel(string createPC, string starTime, string stopTime)
 		{
@@ -221,8 +272,18 @@ namespace DAL
 								d.styleId,
 								d.colorId,
 								sizeName;";
-			DataTable result = Mysqlfsg_SqlHelper.ExcuteTable(sql);
-			return result;
+		 
+			DataTable dt = new DataTable();
+			if (MiddleWare == "1")
+			{
+				dt = MyCatfsg_SqlHelper.ExcuteTable(sql);
+			}
+			else
+			{
+				dt = Mysqlfsg_SqlHelper.ExcuteTable(sql);
+			}
+
+			return dt;
 		}
 	}
 }

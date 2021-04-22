@@ -149,6 +149,39 @@ namespace COMMON
                         ++count;
                     }
                 }
+                if (tableName == "My_Noumber")
+                {
+                    for (i = 0; i < data.Rows.Count; ++i)
+                    {
+
+
+                        IRow row = sheet.CreateRow(count);
+                        for (j = 0; j < data.Columns.Count; ++j)
+                        {
+                           // string dd = Convert.ToString(data.Rows[i][j]);
+                            switch (data.Columns[j].ColumnName.ToString())
+                            {
+                                case "qty"://整型
+                                    string dd = Convert.ToString(data.Rows[i][j]);
+                                    if (dd != "")
+                                    {
+                                        row.CreateCell(j).SetCellValue(Convert.ToDouble(dd));
+
+                                    }
+                                    else
+                                    {
+                                        row.CreateCell(j).SetCellValue("");
+                                    }
+                                    break;
+                                default://其它字符串 
+                                    row.CreateCell(j).SetCellValue(data.Rows[i][j].ToString()); 
+                                    break;
+                            }
+                        }
+                        ++count;
+                    }
+                }
+
                 workbook.Write(fs); //写入到excel
                 return count;
             }

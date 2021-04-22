@@ -321,118 +321,14 @@ namespace WinForm
                 barstr.step = 100;
                 barstr.maxstep = 100;
                 UpdateUIDelegate(barstr);
-               // Cursor = Cursors.Default;
+                // Cursor = Cursors.Default;
                 //MessageBox.Show("没有入库资料");
-                return;
-            }
-            // 过滤沖銷的條碼號
-            DataTable offSetDT = ogm.getOffSet(org, subinv, location, starTime, stopTime);
-            if (offSetDT.Rows.Count > 0)
-            {
-                for(int i=0;i< offSetDT.Rows.Count; i++)
-                {
-                    for(int j = 0; j < outGoingDT.Rows.Count; j++)
-                    {
-                        if (outGoingDT.Rows[j]["TagNumber"].ToString() == offSetDT.Rows[i]["TagNumber"].ToString())
-                        {
-                            outGoingDT.Rows.RemoveAt(j);
-                            j--;
-                        }
-                    }
-                }
-            }
-            // 建立list  PO  款号 色组    PO+款号+色组
-            List<outGoing_pos> ogps = new List<outGoing_pos>();
-            bool isOgps = true;
-            
-            barstr.str = "正在查询入库扫描记录.";
-            barstr.step = 0;
-            barstr.maxstep = outGoingDT.Rows.Count;
+                // return;
 
-            barstr.str2 = "正在查询入库扫描记录";
-            barstr.step2 = 2;
-            barstr.maxstep2 =4;
-            UpdateUIDelegate(barstr);
+                // 查找 手工入库单 
 
-            for (int i = 0; i < outGoingDT.Rows.Count; i++)
-            {
-                barstr.step = i;
-                UpdateUIDelegate(barstr);
-
-                outGoing_pos ogp = new outGoing_pos();
-                if (outGoingDT.Rows[i]["OrderPO"].ToString().Length <= 0)
-                {
-                    ogp.po_ids = outGoingDT.Rows[i]["GtnPO"].ToString();
-                }
-                else
-                {
-                    ogp.po_ids = outGoingDT.Rows[i]["OrderPO"].ToString();
-                     
-                }
-
-                ogp.style_ids = outGoingDT.Rows[i]["Buyer_Item"].ToString();
-                ogp.clr_nos = outGoingDT.Rows[i]["color_code"].ToString();
-                ogp.OGACDate = outGoingDT.Rows[i]["OGACDate"].ToString();
-                ogp.Plant = outGoingDT.Rows[i]["Plant"].ToString();
-                ogp.pscs = ogp.po_ids + ogp.style_ids + ogp.clr_nos;
-                isOgps = ogpsIsExists(ogps, ogp.pscs);
-
-                if (!isOgps)
-                {
-                    ogps.Add(ogp);
-                }
-            }
-            
-            if (ogps.Count <= 0)
-            {               
-                barstr.str = "没有入库资料.";
-                barstr.step = 100;
-                barstr.maxstep = 100;
-
-                barstr.str2 = "没有入库资料..";
-                barstr.step2 = 100;
-                barstr.maxstep2 = 100;
-                UpdateUIDelegate(barstr);               
-                MessageBox.Show("没有入库资料");
-                return;
-            }
-            
-            barstr.str = "正在查询订单系统资料.";
-            barstr.step = 3;
-            barstr.maxstep = 4;
-
-            barstr.str2 = "正在查询订单系统资料..";
-            barstr.step2 = 3;
-            barstr.maxstep2 = 4;
-            UpdateUIDelegate(barstr);
-
-            //查询 //測試網絡
-            DataTable od_infoDB = ogm.getOD_POFromBestByPSC(ogps);            
-            barstr.str = "正在查询订单系统资料.";
-            barstr.step = 0;
-            barstr.maxstep = od_infoDB.Rows.Count;
-            barstr.str2 = "正在查询订单系统资料..";
-            barstr.step2 = 0;
-            barstr.maxstep2 = outGoingDT.Rows.Count;
-
-            UpdateUIDelegate(barstr);
-            if (od_infoDB == null || od_infoDB.Rows.Count <= 0)
-            {
-                barstr.str = "没有找到订单数据.";
-                barstr.step = 100;
-                barstr.maxstep = 100;
-
-                barstr.str2 = "没有找到订单数据..";
-                barstr.step2 = 100;
-                barstr.maxstep2 = 100;
-                UpdateUIDelegate(barstr);               
-                MessageBox.Show("没有找到订单数据");
-                this.isod_ouDB = false;
-                this.dt.Clear();
-                this.dt = outGoingDT;
-            }
-            else
-            {
+                // select * from countreceis WHERE org='TOP' and subinv ='TA_HD' and line ='CF36D'  and  `status` = 0   
+                //   public string org = "";
                 DataTable od_ouDB = new DataTable();
                 od_ouDB.Columns.Add(new DataColumn("org", Type.GetType("System.String"))); // 厂区
                 od_ouDB.Columns.Add(new DataColumn("cust_id", Type.GetType("System.String"))); // 客户
@@ -470,165 +366,27 @@ namespace WinForm
                 od_ouDB.Columns.Add(new DataColumn("od_type", Type.GetType("System.String")));// 订单类别
                 od_ouDB.Columns.Add(new DataColumn("id", Type.GetType("System.String"))); //数据库ID
 
-                /*
-                 b1.po_no,
-           h1.cust_id,
-           h1.season_id,
-           h1.release_who,
-           b1.style_id,
-           b1.clr_no
-                 */
-                DataTable infoDB = new DataTable();
-                infoDB.Columns.Add(new DataColumn("po_no", Type.GetType("System.String"))); // PO
-                infoDB.Columns.Add(new DataColumn("cust_id", Type.GetType("System.String"))); // 客户
-                infoDB.Columns.Add(new DataColumn("season_id", Type.GetType("System.String"))); // 季節號
-                infoDB.Columns.Add(new DataColumn("release_who", Type.GetType("System.String"))); // 更新人
-                infoDB.Columns.Add(new DataColumn("style_id", Type.GetType("System.String"))); // 款號
-                infoDB.Columns.Add(new DataColumn("clr_no", Type.GetType("System.String"))); // 色組
-
-                infoDB.Columns.Add(new DataColumn("yymm", Type.GetType("System.String"))); // 月BUY
-                infoDB.Columns.Add(new DataColumn("buy_cname", Type.GetType("System.String"))); // 月BUY 中文
-                                                                                                // b.po_no
-
-                // 查找訂單月BUY
-
-              
-                for (int i = 0; i < od_infoDB.Rows.Count; i++)
-                {
-                    string yymmStr = "";
-                    string buyStr = "";
-                    DataTable YYMM = ogm.getYYMMFromBestByPo(od_infoDB.Rows[i]["po_no"].ToString());
-                    if (YYMM.Rows.Count > 0)
-                    {
-                        for(int j = 0; j < YYMM.Rows.Count; j++)
-                        {
-                            yymmStr = yymmStr + YYMM.Rows[j]["yymm"].ToString() +',';
-                            buyStr = buyStr + YYMM.Rows[j]["buy_cname"].ToString() + ',';
-
-                        }
-                    }
-                    yymmStr = yymmStr.Substring(0,yymmStr.Length -1 );
-                    buyStr = buyStr.Substring(0,buyStr.Length - 1);
-
-                    DataRow dr = infoDB.NewRow();
-                    dr["po_no"] = od_infoDB.Rows[i]["po_no"].ToString();
-                    dr["cust_id"] = od_infoDB.Rows[i]["cust_id"].ToString(); 
-                    dr["season_id"] = od_infoDB.Rows[i]["season_id"].ToString(); 
-                    dr["release_who"] = od_infoDB.Rows[i]["release_who"].ToString(); 
-                    dr["style_id"] = od_infoDB.Rows[i]["style_id"].ToString();
-                    dr["clr_no"] = od_infoDB.Rows[i]["clr_no"].ToString(); 
-                    dr["yymm"] = yymmStr;
-                    dr["buy_cname"] = buyStr;
-                    infoDB.Rows.Add(dr);
-
-                   // yymmStr = "";
-                   // buyStr = "";
-                }
-                od_infoDB.Clear();
-                od_infoDB = infoDB;
-
-
-
-                barstr.maxstep = od_infoDB.Rows.Count;
-                barstr.step = 0;
-                barstr.maxstep2 = outGoingDT.Rows.Count;
-                barstr.step2 = 0;
-                UpdateUIDelegate(barstr);
-                //合并订单数据与入库数据
-                for (   int i = 0; i < outGoingDT.Rows.Count; i++)
-                {
-                    //  barstr.step2 = Convert.ToInt32( Convert.ToDouble(i) / Convert.ToDouble(outGoingDT.Rows.Count)  * 100);
-                    barstr.step2 = i;
-                    //UpdateUIDelegate(barstr);
-
-
-                    for (int j = 0; j < od_infoDB.Rows.Count; j++)
-                    {
-                        // barstr.step = Convert.ToInt32(Convert.ToDouble(j) / Convert.ToDouble(od_infoDB.Rows.Count) * 100);
-                  //      barstr.step = j;
-                     //   UpdateUIDelegate(barstr);
-
-                        if ( //outGoingDT.Rows[i]["OrderPO"].ToString() == od_infoDB.Rows[j]["po_no"].ToString() &&
-                            outGoingDT.Rows[i]["Buyer_Item"].ToString() == od_infoDB.Rows[j]["style_id"].ToString() &&
-                            outGoingDT.Rows[i]["color_code"].ToString() == od_infoDB.Rows[j]["clr_no"].ToString() &&
-                            //outGoingDT.Rows[i]["OGACDate"].ToString() == od_infoDB.Rows[j]["def_date"].ToString() &&
-                            //outGoingDT.Rows[i]["Plant"].ToString() == od_infoDB.Rows[j]["area_id"].ToString() &&
-                            //od_infoDB.Rows[j]["def_date"].ToString() != ""
-                            outGoingDT.Rows[i]["GtnPO"].ToString() == od_infoDB.Rows[j]["po_no"].ToString() 
-                            
-                          
-                            )
-                        {
-                            DataRow dr = od_ouDB.NewRow();
-                            dr["org"] = outGoingDT.Rows[i]["org"].ToString(); // 厂区
-                            dr["cust_id"] = outGoingDT.Rows[i]["cust_id"].ToString(); // 客户
-                          //  dr["my_no"] = od_infoDB.Rows[j]["my_no"].ToString(); // 自编单号
-                            dr["season_id"] = od_infoDB.Rows[j]["season_id"].ToString(); // 季节
-                            dr["OrderPO"] = outGoingDT.Rows[i]["OrderPO"].ToString(); // 订单PO  成品扫描 
-                            dr["GtnPO"] = outGoingDT.Rows[i]["GtnPO"].ToString(); // 出货PO
-                            dr["MAIN_LINE"] = outGoingDT.Rows[i]["MAIN_LINE"].ToString(); // PO-LINE      
-                            dr["con_no"] = outGoingDT.Rows[i]["con_no"].ToString();// 箱号
-                            dr["Buyer_Item"] = outGoingDT.Rows[i]["Buyer_Item"].ToString(); // 款号
-                            dr["yymm"] = od_infoDB.Rows[j]["yymm"].ToString(); // 订单月BUY
-                            dr["buy_cname"] = od_infoDB.Rows[j]["buy_cname"].ToString(); // 订单月BUY 中文名
-                            dr["color_code"] = outGoingDT.Rows[i]["color_code"].ToString();// 色组 
-                            dr["Size1"] = outGoingDT.Rows[i]["Size1"].ToString(); // 尺码
-                             
-                            dr["size_qty"] = outGoingDT.Rows[i]["size_qty"].ToString(); // 尺码件数
-                            dr["box_qty"] = outGoingDT.Rows[i]["box_qty"].ToString(); // 箱件数
-                            dr["kg"] = outGoingDT.Rows[i]["kg"].ToString(); // 箱重量
-                            dr["PO_qty"] = outGoingDT.Rows[i]["PO_qty"].ToString(); // 订单数
-                            dr["subinv"] = outGoingDT.Rows[i]["subinv"].ToString(); // 仓库码
-                            dr["location"] = outGoingDT.Rows[i]["location"].ToString(); // 储位码
-                           // dr["mark"] = od_infoDB.Rows[j]["mark"].ToString(); // 备注
-                            dr["TagNumber"] = outGoingDT.Rows[i]["TagNumber"].ToString(); // 外箱条码
-                            dr["Create_Pc"] = outGoingDT.Rows[i]["Create_Pc"].ToString(); // 上传电脑名
-                            dr["ScanTime"] = outGoingDT.Rows[i]["ScanTime"].ToString(); // 扫描时间
-                            dr["Update_Date"] = outGoingDT.Rows[i]["Update_Date"].ToString(); // 上传时间
-
-
-                            dr["po_no"] = od_infoDB.Rows[j]["po_no"].ToString(); // 订单PO BEST 
-                            //dr["od_no"] = od_infoDB.Rows[j]["od_no"].ToString(); // 订单号 BEST
-                            //dr["od_date"] = od_infoDB.Rows[j]["od_date"].ToString(); // 接单日期
-                            dr["Bcust_id"] = od_infoDB.Rows[j]["cust_id"].ToString(); // 客户 
-                           // dr["w_id"] = od_infoDB.Rows[j]["w_id"].ToString();// 厂区ID
-                            dr["release_who"] = od_infoDB.Rows[j]["release_who"].ToString(); // 订单业务员
-                            dr["style_id"] = od_infoDB.Rows[j]["style_id"].ToString(); // 款式
-                            dr["clr_no"] = od_infoDB.Rows[j]["clr_no"].ToString();  // 色组 
-                            //dr["od_type"] = od_infoDB.Rows[j]["od_type"].ToString();// 订单类别
-                          
-                            dr["id"] = outGoingDT.Rows[i]["id"].ToString(); //数据库ID
-                            od_ouDB.Rows.Add(dr);
-                        }
-                    }
-                }
-
-                // 查找 手工入库单 
-
-                // select * from countreceis WHERE org='TOP' and subinv ='TA_HD' and line ='CF36D'  and  `status` = 0   
-                //   public string org = "";
-
                 //查询 
-                DataTable noBarCodeDt = ogm.getReceiFromNoBarCode(org, subinv, location,  starTime,  stopTime);
+                DataTable noBarCodeDt = ogm.getReceiFromNoBarCode(org, subinv, location, starTime, stopTime);
                 if (noBarCodeDt.Rows.Count > 0)
                 {
 
                     /*
                      org,
-								subinv,
-								line,
-								style,
-								color,
-								size,
-								SUM( qtyCount ) qtyCount,
-								SUM( PO ) OffsetQty,
-								receiNumber ,
-								receiDate
+                                subinv,
+                                line,
+                                style,
+                                color,
+                                size,
+                                SUM( qtyCount ) qtyCount,
+                                SUM( PO ) OffsetQty,
+                                receiNumber ,
+                                receiDate
                      */
                     for (int i = 0; i < noBarCodeDt.Rows.Count; i++)
                     {
                         DataRow dr = od_ouDB.NewRow();
-                        
+
                         dr["org"] = noBarCodeDt.Rows[i]["org"].ToString(); // 厂区
                         dr["cust_id"] = ""; // 客户
                         dr["season_id"] = ""; // 季节
@@ -653,7 +411,7 @@ namespace WinForm
                         dr["ScanTime"] = noBarCodeDt.Rows[i]["receiDate"].ToString(); // 扫描时间
                         dr["Update_Date"] = ""; // 上传时间
                         dr["po_no"] = ""; // 订单PO BEST 
-                        //dr["od_no"] = od_infoDB.Rows[j]["od_no"].ToString(); // 订单号 BEST
+                                          //dr["od_no"] = od_infoDB.Rows[j]["od_no"].ToString(); // 订单号 BEST
                         dr["od_date"] = ""; // 接单日期
                         dr["Bcust_id"] = ""; // 客户 
                         dr["w_id"] = "";// 厂区ID
@@ -665,28 +423,394 @@ namespace WinForm
                         od_ouDB.Rows.Add(dr);
                     }
 
+                    barstr.str = "正在查询订单系统资料.";
+                    barstr.step = 4;
+                    barstr.maxstep = 4;
+
+                    barstr.str2 = "正在查询订单系统资料..";
+                    barstr.step2 = 4;
+                    barstr.maxstep2 = 4;
+                    UpdateUIDelegate(barstr);
+
+                    //  this.dgvOutgoingTable.DataSource = null;
+                    //  this.dgvOutgoingTable.DataSource = od_ouDB;
+
+                    this.isod_ouDB = true;
+                    this.dt.Clear();
+                    this.dt = od_ouDB;
                 }
-               
 
 
 
-                barstr.str = "正在查询订单系统资料.";
-                barstr.step = 4;
-                barstr.maxstep = 4;
+                }
+                else
+            {
 
-                barstr.str2 = "正在查询订单系统资料..";
-                barstr.step2 = 4;
+
+                // 过滤沖銷的條碼號
+                DataTable offSetDT = ogm.getOffSet(org, subinv, location, starTime, stopTime);
+                if (offSetDT.Rows.Count > 0)
+                {
+                    for (int i = 0; i < offSetDT.Rows.Count; i++)
+                    {
+                        for (int j = 0; j < outGoingDT.Rows.Count; j++)
+                        {
+                            if (outGoingDT.Rows[j]["TagNumber"].ToString() == offSetDT.Rows[i]["TagNumber"].ToString())
+                            {
+                                outGoingDT.Rows.RemoveAt(j);
+                                j--;
+                            }
+                        }
+                    }
+                }
+                // 建立list  PO  款号 色组    PO+款号+色组
+                List<outGoing_pos> ogps = new List<outGoing_pos>();
+                bool isOgps = true;
+
+                barstr.str = "正在查询入库扫描记录.";
+                barstr.step = 0;
+                barstr.maxstep = outGoingDT.Rows.Count;
+
+                barstr.str2 = "正在查询入库扫描记录";
+                barstr.step2 = 2;
                 barstr.maxstep2 = 4;
                 UpdateUIDelegate(barstr);
 
-                //  this.dgvOutgoingTable.DataSource = null;
-                //  this.dgvOutgoingTable.DataSource = od_ouDB;
-               
-                this.isod_ouDB = true;
-                this.dt.Clear();
-                this.dt = od_ouDB;
+                for (int i = 0; i < outGoingDT.Rows.Count; i++)
+                {
+                    barstr.step = i;
+                    UpdateUIDelegate(barstr);
 
-            }          
+                    outGoing_pos ogp = new outGoing_pos();
+                    if (outGoingDT.Rows[i]["OrderPO"].ToString().Length <= 0)
+                    {
+                        ogp.po_ids = outGoingDT.Rows[i]["GtnPO"].ToString();
+                    }
+                    else
+                    {
+                        ogp.po_ids = outGoingDT.Rows[i]["OrderPO"].ToString();
+
+                    }
+
+                    ogp.style_ids = outGoingDT.Rows[i]["Buyer_Item"].ToString();
+                    ogp.clr_nos = outGoingDT.Rows[i]["color_code"].ToString();
+                    ogp.OGACDate = outGoingDT.Rows[i]["OGACDate"].ToString();
+                    ogp.Plant = outGoingDT.Rows[i]["Plant"].ToString();
+                    ogp.pscs = ogp.po_ids + ogp.style_ids + ogp.clr_nos;
+                    isOgps = ogpsIsExists(ogps, ogp.pscs);
+
+                    if (!isOgps)
+                    {
+                        ogps.Add(ogp);
+                    }
+                }
+
+                if (ogps.Count <= 0)
+                {
+                    barstr.str = "没有入库资料.";
+                    barstr.step = 100;
+                    barstr.maxstep = 100;
+
+                    barstr.str2 = "没有入库资料..";
+                    barstr.step2 = 100;
+                    barstr.maxstep2 = 100;
+                    UpdateUIDelegate(barstr);
+                    MessageBox.Show("没有入库资料");
+                    return;
+                }
+
+                barstr.str = "正在查询订单系统资料.";
+                barstr.step = 3;
+                barstr.maxstep = 4;
+
+                barstr.str2 = "正在查询订单系统资料..";
+                barstr.step2 = 3;
+                barstr.maxstep2 = 4;
+                UpdateUIDelegate(barstr);
+
+                //查询 //測試網絡
+                DataTable od_infoDB = ogm.getOD_POFromBestByPSC(ogps);
+                barstr.str = "正在查询订单系统资料.";
+                barstr.step = 0;
+                barstr.maxstep = od_infoDB.Rows.Count;
+                barstr.str2 = "正在查询订单系统资料..";
+                barstr.step2 = 0;
+                barstr.maxstep2 = outGoingDT.Rows.Count;
+
+                UpdateUIDelegate(barstr);
+                if (od_infoDB == null || od_infoDB.Rows.Count <= 0)
+                {
+                    barstr.str = "没有找到订单数据.";
+                    barstr.step = 100;
+                    barstr.maxstep = 100;
+
+                    barstr.str2 = "没有找到订单数据..";
+                    barstr.step2 = 100;
+                    barstr.maxstep2 = 100;
+                    UpdateUIDelegate(barstr);
+                    MessageBox.Show("没有找到订单数据");
+                    this.isod_ouDB = false;
+                    this.dt.Clear();
+                    this.dt = outGoingDT;
+                }
+                else
+                {
+                    DataTable od_ouDB = new DataTable();
+                    od_ouDB.Columns.Add(new DataColumn("org", Type.GetType("System.String"))); // 厂区
+                    od_ouDB.Columns.Add(new DataColumn("cust_id", Type.GetType("System.String"))); // 客户
+                    od_ouDB.Columns.Add(new DataColumn("my_no", Type.GetType("System.String"))); // 自编单号
+                    od_ouDB.Columns.Add(new DataColumn("season_id", Type.GetType("System.String"))); // 季节
+                    od_ouDB.Columns.Add(new DataColumn("OrderPO", Type.GetType("System.String"))); // 订单PO  成品扫描
+                    od_ouDB.Columns.Add(new DataColumn("GtnPO", Type.GetType("System.String"))); // 出货PO
+                    od_ouDB.Columns.Add(new DataColumn("MAIN_LINE", Type.GetType("System.String"))); // PO-LINE   
+                    od_ouDB.Columns.Add(new DataColumn("con_no", Type.GetType("System.String")));// 箱号
+                    od_ouDB.Columns.Add(new DataColumn("Buyer_Item", Type.GetType("System.String"))); // 款号
+                    od_ouDB.Columns.Add(new DataColumn("yymm", Type.GetType("System.String"))); // 订单月BUY
+                    od_ouDB.Columns.Add(new DataColumn("buy_cname", Type.GetType("System.String"))); // 订单月BUY 中文名
+                    od_ouDB.Columns.Add(new DataColumn("color_code", Type.GetType("System.String")));// 色组
+                    od_ouDB.Columns.Add(new DataColumn("Size1", Type.GetType("System.String"))); // 尺码
+                    od_ouDB.Columns.Add(new DataColumn("size_qty", Type.GetType("System.String"))); // 尺码件数
+                    od_ouDB.Columns.Add(new DataColumn("box_qty", Type.GetType("System.String"))); // 箱件数
+                    od_ouDB.Columns.Add(new DataColumn("kg", Type.GetType("System.String"))); // 箱重量
+                    od_ouDB.Columns.Add(new DataColumn("PO_qty", Type.GetType("System.String"))); // PO#订单数
+                    od_ouDB.Columns.Add(new DataColumn("subinv", Type.GetType("System.String"))); // 仓库码
+                    od_ouDB.Columns.Add(new DataColumn("location", Type.GetType("System.String"))); // 储位码
+                    od_ouDB.Columns.Add(new DataColumn("mark", Type.GetType("System.String"))); // 备注
+                    od_ouDB.Columns.Add(new DataColumn("TagNumber", Type.GetType("System.String"))); // 外箱条码
+                    od_ouDB.Columns.Add(new DataColumn("Create_Pc", Type.GetType("System.String"))); // 上传电脑名
+                    od_ouDB.Columns.Add(new DataColumn("ScanTime", Type.GetType("System.String"))); // 扫描时间 
+                    od_ouDB.Columns.Add(new DataColumn("Update_Date", Type.GetType("System.String"))); // 上传时间
+
+                    od_ouDB.Columns.Add(new DataColumn("po_no", Type.GetType("System.String"))); // 订单PO BEST 
+                    od_ouDB.Columns.Add(new DataColumn("od_no", Type.GetType("System.String"))); // 订单号 BEST
+                    od_ouDB.Columns.Add(new DataColumn("od_date", Type.GetType("System.String"))); // 接单日期
+                    od_ouDB.Columns.Add(new DataColumn("Bcust_id", Type.GetType("System.String"))); // 客户 BEST
+                    od_ouDB.Columns.Add(new DataColumn("w_id", Type.GetType("System.String")));// 厂区ID
+                    od_ouDB.Columns.Add(new DataColumn("release_who", Type.GetType("System.String"))); // 订单业务员
+                    od_ouDB.Columns.Add(new DataColumn("style_id", Type.GetType("System.String"))); // 款式
+                    od_ouDB.Columns.Add(new DataColumn("clr_no", Type.GetType("System.String")));  // 色组
+                    od_ouDB.Columns.Add(new DataColumn("od_type", Type.GetType("System.String")));// 订单类别
+                    od_ouDB.Columns.Add(new DataColumn("id", Type.GetType("System.String"))); //数据库ID
+
+                    /*
+                     b1.po_no,
+               h1.cust_id,
+               h1.season_id,
+               h1.release_who,
+               b1.style_id,
+               b1.clr_no
+                     */
+                    DataTable infoDB = new DataTable();
+                    infoDB.Columns.Add(new DataColumn("po_no", Type.GetType("System.String"))); // PO
+                    infoDB.Columns.Add(new DataColumn("cust_id", Type.GetType("System.String"))); // 客户
+                    infoDB.Columns.Add(new DataColumn("season_id", Type.GetType("System.String"))); // 季節號
+                    infoDB.Columns.Add(new DataColumn("release_who", Type.GetType("System.String"))); // 更新人
+                    infoDB.Columns.Add(new DataColumn("style_id", Type.GetType("System.String"))); // 款號
+                    infoDB.Columns.Add(new DataColumn("clr_no", Type.GetType("System.String"))); // 色組
+
+                    infoDB.Columns.Add(new DataColumn("yymm", Type.GetType("System.String"))); // 月BUY
+                    infoDB.Columns.Add(new DataColumn("buy_cname", Type.GetType("System.String"))); // 月BUY 中文
+                                                                                                    // b.po_no
+
+                    // 查找訂單月BUY
+
+
+                    for (int i = 0; i < od_infoDB.Rows.Count; i++)
+                    {
+                        string yymmStr = "";
+                        string buyStr = "";
+                        DataTable YYMM = ogm.getYYMMFromBestByPo(od_infoDB.Rows[i]["po_no"].ToString());
+                        if (YYMM.Rows.Count > 0)
+                        {
+                            for (int j = 0; j < YYMM.Rows.Count; j++)
+                            {
+                                yymmStr = yymmStr + YYMM.Rows[j]["yymm"].ToString() + ',';
+                                buyStr = buyStr + YYMM.Rows[j]["buy_cname"].ToString() + ',';
+
+                            }
+                        }
+                        yymmStr = yymmStr.Substring(0, yymmStr.Length - 1);
+                        buyStr = buyStr.Substring(0, buyStr.Length - 1);
+
+                        DataRow dr = infoDB.NewRow();
+                        dr["po_no"] = od_infoDB.Rows[i]["po_no"].ToString();
+                        dr["cust_id"] = od_infoDB.Rows[i]["cust_id"].ToString();
+                        dr["season_id"] = od_infoDB.Rows[i]["season_id"].ToString();
+                        dr["release_who"] = od_infoDB.Rows[i]["release_who"].ToString();
+                        dr["style_id"] = od_infoDB.Rows[i]["style_id"].ToString();
+                        dr["clr_no"] = od_infoDB.Rows[i]["clr_no"].ToString();
+                        dr["yymm"] = yymmStr;
+                        dr["buy_cname"] = buyStr;
+                        infoDB.Rows.Add(dr);
+
+                        // yymmStr = "";
+                        // buyStr = "";
+                    }
+                    od_infoDB.Clear();
+                    od_infoDB = infoDB;
+
+
+
+                    barstr.maxstep = od_infoDB.Rows.Count;
+                    barstr.step = 0;
+                    barstr.maxstep2 = outGoingDT.Rows.Count;
+                    barstr.step2 = 0;
+                    UpdateUIDelegate(barstr);
+                    //合并订单数据与入库数据
+                    for (int i = 0; i < outGoingDT.Rows.Count; i++)
+                    {
+                        //  barstr.step2 = Convert.ToInt32( Convert.ToDouble(i) / Convert.ToDouble(outGoingDT.Rows.Count)  * 100);
+                        barstr.step2 = i;
+                        //UpdateUIDelegate(barstr);
+
+
+                        for (int j = 0; j < od_infoDB.Rows.Count; j++)
+                        {
+                            // barstr.step = Convert.ToInt32(Convert.ToDouble(j) / Convert.ToDouble(od_infoDB.Rows.Count) * 100);
+                            //      barstr.step = j;
+                            //   UpdateUIDelegate(barstr);
+
+                            if ( //outGoingDT.Rows[i]["OrderPO"].ToString() == od_infoDB.Rows[j]["po_no"].ToString() &&
+                                outGoingDT.Rows[i]["Buyer_Item"].ToString() == od_infoDB.Rows[j]["style_id"].ToString() &&
+                                outGoingDT.Rows[i]["color_code"].ToString() == od_infoDB.Rows[j]["clr_no"].ToString() &&
+                                //outGoingDT.Rows[i]["OGACDate"].ToString() == od_infoDB.Rows[j]["def_date"].ToString() &&
+                                //outGoingDT.Rows[i]["Plant"].ToString() == od_infoDB.Rows[j]["area_id"].ToString() &&
+                                //od_infoDB.Rows[j]["def_date"].ToString() != ""
+                                outGoingDT.Rows[i]["GtnPO"].ToString() == od_infoDB.Rows[j]["po_no"].ToString()
+
+
+                                )
+                            {
+                                DataRow dr = od_ouDB.NewRow();
+                                dr["org"] = outGoingDT.Rows[i]["org"].ToString(); // 厂区
+                                dr["cust_id"] = outGoingDT.Rows[i]["cust_id"].ToString(); // 客户
+                                                                                          //  dr["my_no"] = od_infoDB.Rows[j]["my_no"].ToString(); // 自编单号
+                                dr["season_id"] = od_infoDB.Rows[j]["season_id"].ToString(); // 季节
+                                dr["OrderPO"] = outGoingDT.Rows[i]["OrderPO"].ToString(); // 订单PO  成品扫描 
+                                dr["GtnPO"] = outGoingDT.Rows[i]["GtnPO"].ToString(); // 出货PO
+                                dr["MAIN_LINE"] = outGoingDT.Rows[i]["MAIN_LINE"].ToString(); // PO-LINE      
+                                dr["con_no"] = outGoingDT.Rows[i]["con_no"].ToString();// 箱号
+                                dr["Buyer_Item"] = outGoingDT.Rows[i]["Buyer_Item"].ToString(); // 款号
+                                dr["yymm"] = od_infoDB.Rows[j]["yymm"].ToString(); // 订单月BUY
+                                dr["buy_cname"] = od_infoDB.Rows[j]["buy_cname"].ToString(); // 订单月BUY 中文名
+                                dr["color_code"] = outGoingDT.Rows[i]["color_code"].ToString();// 色组 
+                                dr["Size1"] = outGoingDT.Rows[i]["Size1"].ToString(); // 尺码
+
+                                dr["size_qty"] = outGoingDT.Rows[i]["size_qty"].ToString(); // 尺码件数
+                                dr["box_qty"] = outGoingDT.Rows[i]["box_qty"].ToString(); // 箱件数
+                                dr["kg"] = outGoingDT.Rows[i]["kg"].ToString(); // 箱重量
+                                dr["PO_qty"] = outGoingDT.Rows[i]["PO_qty"].ToString(); // 订单数
+                                dr["subinv"] = outGoingDT.Rows[i]["subinv"].ToString(); // 仓库码
+                                dr["location"] = outGoingDT.Rows[i]["location"].ToString(); // 储位码
+                                                                                            // dr["mark"] = od_infoDB.Rows[j]["mark"].ToString(); // 备注
+                                dr["TagNumber"] = outGoingDT.Rows[i]["TagNumber"].ToString(); // 外箱条码
+                                dr["Create_Pc"] = outGoingDT.Rows[i]["Create_Pc"].ToString(); // 上传电脑名
+                                dr["ScanTime"] = outGoingDT.Rows[i]["ScanTime"].ToString(); // 扫描时间
+                                dr["Update_Date"] = outGoingDT.Rows[i]["Update_Date"].ToString(); // 上传时间
+
+
+                                dr["po_no"] = od_infoDB.Rows[j]["po_no"].ToString(); // 订单PO BEST 
+                                                                                     //dr["od_no"] = od_infoDB.Rows[j]["od_no"].ToString(); // 订单号 BEST
+                                                                                     //dr["od_date"] = od_infoDB.Rows[j]["od_date"].ToString(); // 接单日期
+                                dr["Bcust_id"] = od_infoDB.Rows[j]["cust_id"].ToString(); // 客户 
+                                                                                          // dr["w_id"] = od_infoDB.Rows[j]["w_id"].ToString();// 厂区ID
+                                dr["release_who"] = od_infoDB.Rows[j]["release_who"].ToString(); // 订单业务员
+                                dr["style_id"] = od_infoDB.Rows[j]["style_id"].ToString(); // 款式
+                                dr["clr_no"] = od_infoDB.Rows[j]["clr_no"].ToString();  // 色组 
+                                                                                        //dr["od_type"] = od_infoDB.Rows[j]["od_type"].ToString();// 订单类别
+
+                                dr["id"] = outGoingDT.Rows[i]["id"].ToString(); //数据库ID
+                                od_ouDB.Rows.Add(dr);
+                            }
+                        }
+                    }
+
+
+                    // 查找 手工入库单 
+
+                    // select * from countreceis WHERE org='TOP' and subinv ='TA_HD' and line ='CF36D'  and  `status` = 0   
+                    //   public string org = "";
+
+                    //查询 
+                    DataTable noBarCodeDt = ogm.getReceiFromNoBarCode(org, subinv, location, starTime, stopTime);
+                    if (noBarCodeDt.Rows.Count > 0)
+                    {
+
+                        /*
+                         org,
+                                    subinv,
+                                    line,
+                                    style,
+                                    color,
+                                    size,
+                                    SUM( qtyCount ) qtyCount,
+                                    SUM( PO ) OffsetQty,
+                                    receiNumber ,
+                                    receiDate
+                         */
+                        for (int i = 0; i < noBarCodeDt.Rows.Count; i++)
+                        {
+                            DataRow dr = od_ouDB.NewRow();
+
+                            dr["org"] = noBarCodeDt.Rows[i]["org"].ToString(); // 厂区
+                            dr["cust_id"] = ""; // 客户
+                            dr["season_id"] = ""; // 季节
+                            dr["OrderPO"] = "无条码单"; // 订单PO  成品扫描 
+                            dr["GtnPO"] = "无条码单"; // 出货PO
+                            dr["MAIN_LINE"] = ""; // PO-LINE      
+                            dr["con_no"] = "";// 箱号
+                            dr["Buyer_Item"] = noBarCodeDt.Rows[i]["style"].ToString(); // 款号
+                            dr["yymm"] = ""; // 订单月BUY
+                            dr["buy_cname"] = ""; // 订单月BUY 中文名
+                            dr["color_code"] = noBarCodeDt.Rows[i]["color"].ToString();// 色组 
+                            dr["Size1"] = noBarCodeDt.Rows[i]["size"].ToString(); // 尺码
+                            dr["size_qty"] = noBarCodeDt.Rows[i]["qtyCount"].ToString(); // 尺码件数
+                            dr["box_qty"] = ""; // 箱件数
+                            dr["kg"] = ""; // 箱重量
+                            dr["PO_qty"] = ""; // 款式件数
+                            dr["subinv"] = noBarCodeDt.Rows[i]["subinv"].ToString(); // 仓库码
+                            dr["location"] = noBarCodeDt.Rows[i]["line"].ToString(); // 储位码
+                            dr["mark"] = ""; // 备注
+                            dr["TagNumber"] = ""; // 外箱条码
+                            dr["Create_Pc"] = noBarCodeDt.Rows[i]["receiInPcName"].ToString(); // 上传电脑名
+                            dr["ScanTime"] = noBarCodeDt.Rows[i]["receiDate"].ToString(); // 扫描时间
+                            dr["Update_Date"] = ""; // 上传时间
+                            dr["po_no"] = ""; // 订单PO BEST 
+                                              //dr["od_no"] = od_infoDB.Rows[j]["od_no"].ToString(); // 订单号 BEST
+                            dr["od_date"] = ""; // 接单日期
+                            dr["Bcust_id"] = ""; // 客户 
+                            dr["w_id"] = "";// 厂区ID
+                            dr["release_who"] = ""; // 订单业务员
+                            dr["style_id"] = noBarCodeDt.Rows[i]["style"].ToString(); // 款式
+                            dr["clr_no"] = "";  // 色组 
+                            dr["od_type"] = "";// 订单类别
+                            dr["id"] = ""; //数据库ID
+                            od_ouDB.Rows.Add(dr);
+                        }
+
+                    }
+
+
+
+
+                    barstr.str = "正在查询订单系统资料.";
+                    barstr.step = 4;
+                    barstr.maxstep = 4;
+
+                    barstr.str2 = "正在查询订单系统资料..";
+                    barstr.step2 = 4;
+                    barstr.maxstep2 = 4;
+                    UpdateUIDelegate(barstr);
+
+                    //  this.dgvOutgoingTable.DataSource = null;
+                    //  this.dgvOutgoingTable.DataSource = od_ouDB;
+
+                    this.isod_ouDB = true;
+                    this.dt.Clear();
+                    this.dt = od_ouDB;
+
+                }
+            }
             barstr.str = "查询完成.";
             barstr.step = 0;
             barstr.maxstep = 0;
